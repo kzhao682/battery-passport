@@ -16,19 +16,19 @@ cp .env.example .env      # then put your Anthropic API key in .env
 ## Usage
 
 ```
-python extract.py path/to/datasheet.pdf                 # extract -> outputs/<name>.json
-python extract.py path/to/datasheet.pdf --verify        # extract, then check quotes
-python extract.py path/to/datasheet.pdf --verify-only   # re-check saved JSON, no API call
+python -m battery_passport path/to/datasheet.pdf                 # extract -> outputs/<name>.json
+python -m battery_passport path/to/datasheet.pdf --verify        # extract, then check quotes
+python -m battery_passport path/to/datasheet.pdf --verify-only   # re-check saved JSON, no API call
 ```
 
 Batch mode runs every PDF in `documents/` and prints a summary table (also saved to
 `outputs/_batch_summary.json`). Files that already have output are reused, so you can resume:
 
 ```
-python extract.py --all --verify --limit 5   # at most 5 new API calls this run
-python extract.py --all --verify             # the rest
-python extract.py --all --verify-only        # re-check saved outputs, no API calls
-python extract.py --all --force              # re-extract everything
+python -m battery_passport --all --verify --limit 5   # at most 5 new API calls this run
+python -m battery_passport --all --verify             # the rest
+python -m battery_passport --all --verify-only        # re-check saved outputs, no API calls
+python -m battery_passport --all --force              # re-extract everything
 ```
 
 `--devset` processes only the 10 files in [evals/devset.json](evals/devset.json) (`make devset`).
@@ -58,7 +58,7 @@ Units are kept as stated.
 - **Durability:** cycle life, end-of-life threshold, calendar life
 - **Operating conditions:** charge, discharge and storage temperature ranges
 
-The fields are defined in [schema.py](schema.py) (`python schema.py` prints the JSON Schema).
+The fields are defined in [battery_passport/schema.py](battery_passport/schema.py) (`python -m battery_passport.schema` prints the JSON Schema).
 [docs/field_map.md](docs/field_map.md) maps each one to the Battery Pass data model; the passport
 fields datasheets rarely contain (carbon footprint, recycled content, due diligence) are out of scope here.
 
