@@ -22,7 +22,11 @@ def _field_listing() -> str:
     for group, group_info in DatasheetExtraction.model_fields.items():
         lines.append(f'"{group}":')
         for name, info in group_info.annotation.model_fields.items():
-            shape = "list of evidence objects" if get_origin(info.annotation) is list else "one evidence object"
+            shape = (
+                "list of evidence objects"
+                if get_origin(info.annotation) is list
+                else "one evidence object"
+            )
             lines.append(f"  - {name} ({shape}): {info.description}")
     return "\n".join(lines)
 
@@ -77,7 +81,6 @@ Reply with JSON only, no other text, in this shape (all groups present):
 }}"""
 
 
-
 class ExtractionError(Exception):
     """The model response could not be turned into a result (e.g. truncated)."""
 
@@ -117,8 +120,10 @@ def extract(pdf_path: Path) -> tuple[dict, dict]:
     if text.startswith("```"):
         text = text.split("\n", 1)[1].rsplit("```", 1)[0]
 
-    usage = {"input_tokens": response.usage.input_tokens,
-             "output_tokens": response.usage.output_tokens}
+    usage = {
+        "input_tokens": response.usage.input_tokens,
+        "output_tokens": response.usage.output_tokens,
+    }
     try:
         result = json.loads(text)
     except json.JSONDecodeError as e:
