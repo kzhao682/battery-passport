@@ -1,0 +1,85 @@
+{
+  "description": "Day 2 dev set: 10 real datasheets (3 bilingual ZH+EN, 2 image-heavy). label_day3 marks the 5 to hand-label as the gold set on Day 3.",
+  "files": [
+    {
+      "file": "LF280K.pdf",
+      "manufacturer": "Lf280K.Pdf",
+      "language": "EN",
+      "layout": "prismatic LFP; clean spec tables; already verified by hand",
+      "label_day3": true,
+      "source_url": null
+    },
+    {
+      "file": "LG_INR18650MH1.pdf",
+      "manufacturer": "Lg",
+      "language": "EN",
+      "layout": "cylindrical NMC; short spec sheet, test-condition footnotes",
+      "label_day3": true,
+      "source_url": null
+    },
+    {
+      "file": "A123_ANR26650M1B.pdf",
+      "manufacturer": "A123 Systems",
+      "language": "EN",
+      "layout": "cylindrical LFP; 2 pages; glyph-name text layer (/Oslash.sc)",
+      "label_day3": false,
+      "source_url": "https://www.nkon.nl/novat/amfile/file/download/file/169/product/1793"
+    },
+    {
+      "file": "SAMSUNG_INR21700-50E.pdf",
+      "manufacturer": "Samsung SDI",
+      "language": "EN",
+      "layout": "cylindrical; 4 pages; spec table + curves",
+      "label_day3": false,
+      "source_url": "https://static.rapidonline.com/pdf/10-5180_v1.pdf"
+    },
+    {
+      "file": "PANASONIC_NCR18650BD.pdf",
+      "manufacturer": "Panasonic",
+      "language": "EN",
+      "layout": "cylindrical; 4 pages; dense text pages",
+      "label_day3": false,
+      "source_url": "https://components101.com/sites/default/files/2020-09/NCR18650BD-Datasheet.pdf"
+    },
+    {
+      "file": "CATL_CB310_280Ah.pdf",
+      "manufacturer": "CATL",
+      "language": "ZH+EN",
+      "layout": "prismatic LFP; bilingual tables; dimensions in vector drawings",
+      "label_day3": true,
+      "source_url": "https://akkudoktor.net/uploads/short-url/8GegqsdDNgPgXbFBYo3WcuYMowa.pdf"
+    },
+    {
+      "file": "CALB_L173F230.pdf",
+      "manufacturer": "CALB",
+      "language": "ZH+EN",
+      "layout": "prismatic LFP; bilingual; long (22 pages) test-procedure document",
+      "label_day3": false,
+      "source_url": "https://utb-shop.ro/poze/15314/CALB%20LF230.pdf"
+    },
+    {
+      "file": "HKD_Na18650-1300.pdf",
+      "manufacturer": "Zhonghuajia (HKD)",
+      "language": "ZH+EN",
+      "layout": "sodium-ion cylindrical; bilingual; different chemistry",
+      "label_day3": true,
+      "source_url": "https://cdn.shopify.com/s/files/1/0592/3694/2029/files/HKD_18650-1300mAh-20C.pdf"
+    },
+    {
+      "file": "WINSTON_LFP300AHA.pdf",
+      "manufacturer": "Winston (via GWL)",
+      "language": "EN",
+      "layout": "image-heavy: pages 1 and 3 are mostly images (58 and 83 text chars)",
+      "label_day3": true,
+      "source_url": "https://www.kvelektro.cz/api/products/1873360/images/O/winston_wb-lyp300aha-datasheet-eng.pdf"
+    },
+    {
+      "file": "SONY_US18650VTC6_techinfo.pdf",
+      "manufacturer": "Sony",
+      "language": "EN",
+      "layout": "image-heavy: ~52 images and <250 text chars on every page",
+      "label_day3": false,
+      "source_url": "https://www.kronium.cz/uploads/SONY_US18650VTC6.pdf"
+    }
+  ]
+}

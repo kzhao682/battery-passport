@@ -1,9 +1,13 @@
-"""Day 1: send one battery datasheet PDF to Claude and get JSON back.
+"""Send battery datasheet PDFs to Claude and get structured passport fields back.
+
+The fields, their descriptions and their shapes all come from schema.py (single source of truth).
 
 Usage:
     python extract.py path/to/datasheet.pdf                 # extract
     python extract.py path/to/datasheet.pdf --verify        # extract, then check quotes
     python extract.py path/to/datasheet.pdf --verify-only   # re-check saved JSON, no API call
+    python extract.py --all [--verify] [--limit N]          # every PDF in documents/
+    python extract.py --devset [--verify] [--limit N]       # only the files in evals/devset.json
 
 Writes the result to outputs/<datasheet-name>.json and prints it.
 """
@@ -16,77 +20,62 @@ import re
 import sys
 import unicodedata
 from pathlib import Path
+from typing import get_origin
 
 import anthropic
 from dotenv import load_dotenv
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 from pypdf import PdfReader
+
+from schema import NUMERIC_PATHS, DatasheetExtraction, Evidence
 
 load_dotenv()  # reads ANTHROPIC_API_KEY from .env
 logging.getLogger("pypdf").setLevel(logging.ERROR)  # silence per-font encoding warnings
 
 MODEL = "claude-sonnet-5-5"
+DEVSET_PATH = Path("evals/devset.json")
 
-# Passport fields that cell datasheets can plausibly contain, drawn from the Battery Pass data
-# model and EU Battery Regulation 2023/1542 (Annex XIII). Attributes datasheets almost never
-# cover (carbon footprint, recycled content, due diligence) are left out on purpose.
-# Dimensions cover all formats: prismatic/pouch use width/thickness/height, cylindrical uses
-# diameter/height; fields that don't apply to a cell should come back null.
-FIELDS = {
-    # --- identity ---
-    "manufacturer": "Company that makes the battery or cell",
-    "model": "Model or part number",
-    "chemistry": "Cell chemistry, e.g. LFP, NMC, NCA, LCO, sodium-ion",
-    "cell_format": "Cell format: one of cylindrical, prismatic, pouch (or null if not stated)",
-    # --- electrical ---
-    "nominal_voltage_v": "Nominal (typical) voltage in volts",
-    "max_charge_voltage_v": "Maximum / charge cut-off voltage in volts",
-    "discharge_cutoff_voltage_v": "Minimum / discharge cut-off voltage in volts",
-    "rated_capacity_ah": "Rated (nominal or minimum) capacity in amp-hours",
-    "energy_wh": "Rated energy in watt-hours (only if stated; do not multiply voltage by capacity)",
-    "internal_resistance_mohm": "Internal resistance (AC or DC) in milliohms",
-    "max_charge_current_a": (
-        "Maximum continuous charge current in amps. If only a C-rate is given, return null and "
-        "put the C-rate in the note"
-    ),
-    "max_discharge_current_a": (
-        "Maximum continuous discharge current in amps. If only a C-rate is given, return null "
-        "and put the C-rate in the note"
-    ),
-    # --- physical ---
-    "weight_kg": "Weight in kilograms",
-    "diameter_mm": "Cell diameter in millimetres (cylindrical cells only; nominal number, no tolerance)",
-    "width_mm": "Cell width in millimetres (prismatic/pouch; nominal number only, no tolerance)",
-    "thickness_mm": "Cell thickness in millimetres (prismatic/pouch; nominal number only, no tolerance)",
-    "height_mm": (
-        "Cell total height (cylindrical: length) in millimetres, including terminals "
-        "(nominal number only)"
-    ),
-    # --- lifetime ---
-    "cycle_life": (
-        "List of rated cycle-life results, one object per test condition, each with keys: "
-        "cycles (number), temperature_c (number or null), charge_rate_c (number or null), "
-        "discharge_rate_c (number or null), end_of_life_capacity_pct (number or null, "
-        "remaining capacity at end of life), conditions (other test conditions as short text, or null)"
-    ),
-    "charge_temp_min_c": "Minimum charging temperature in degrees Celsius",
-    "charge_temp_max_c": "Maximum charging temperature in degrees Celsius",
-    "discharge_temp_min_c": "Minimum discharging temperature in degrees Celsius",
-    "discharge_temp_max_c": "Maximum discharging temperature in degrees Celsius",
-    "storage_temp_min_c": "Minimum storage temperature in degrees Celsius",
-    "storage_temp_max_c": "Maximum storage temperature in degrees Celsius",
-    # --- compliance ---
-    "certifications": (
-        "List of safety/transport/quality standards or certifications the document says the "
-        "cell meets or was tested to (e.g. UN38.3, IEC 62619, UL 1642), as a list of strings"
-    ),
-}
+
+def _field_listing() -> str:
+    """Render the schema's groups and fields (with descriptions) as a compact list for the prompt."""
+    lines = []
+    for group, group_info in DatasheetExtraction.model_fields.items():
+        lines.append(f'"{group}":')
+        for name, info in group_info.annotation.model_fields.items():
+            shape = "list of evidence objects" if get_origin(info.annotation) is list else "one evidence object"
+            lines.append(f"  - {name} ({shape}): {info.description}")
+    return "\n".join(lines)
+
+
+def _evidence_listing() -> str:
+    """Describe the keys of one evidence object, from Evidence's own field descriptions."""
+    return "\n".join(
+        f"  - {name}: {info.description}"
+        for name, info in Evidence.model_fields.items()
+        if name != "document_id"  # filled in by this script, not by the model
+    )
+
 
 PROMPT = f"""You are extracting data for an EU battery passport from a battery datasheet.
 
-For each field below, return the value from the document, the page it is on, and a short
-exact quote from the page that contains it. If the document does not contain a field,
-use null for the value and say so. Do not guess or calculate values that are not stated.
+The output has these groups and fields. A field marked "one evidence object" is an object, or
+null if the document does not state it. A field marked "list of evidence objects" is a list with
+one object per set of conditions, or [] if the document does not state it.
+
+{_field_listing()}
+
+Each evidence object has these keys:
+{_evidence_listing()}
+
+Value rules:
+- Do not guess or calculate anything that is not stated. If a value is not in the document, use
+  null (or [] for lists). Never fill a value from general knowledge.
+- For numeric values give a plain number in "value" and the unit as stated in "unit"
+  (e.g. value 5220, unit "g"; do not convert). Tolerances go in "note", not in "value".
+- A range such as "0.1~0.6" or "-20 to 55" is a {{"min": ..., "max": ...}} object in "value".
+- Dimensions are an object with any of length, width, thickness, height, diameter (numbers, in
+  the unit stated). Cylindrical cells use diameter and height.
+- Put test or use conditions (temperature, C-rate, end-of-life capacity) in "conditions".
 
 Quotes must be verbatim: copy the text exactly as it appears on that page, as one
 contiguous passage. Do not paraphrase, reorder, merge text from different table cells or lines,
@@ -98,69 +87,63 @@ Page numbers: "page" is the position of the page in the PDF file, counting the f
 the file as 1. Ignore any page numbers printed on the pages themselves (cover pages, roman
 numerals and "Page X of Y" footers often do not match the file position).
 
-Fields:
-{json.dumps(FIELDS, indent=2)}
-
-Reply with JSON only, no other text, in this shape:
+Reply with JSON only, no other text, in this shape (all groups present):
 {{
-  "<field_name>": {{"value": ..., "unit": "...", "page": 1, "quote": "..."}},
-  ...
-}}
-
-Values must be plain numbers where the field description says number (no units or tolerances
-inside the value; put tolerances in an optional "note" key). The cycle_life value is a JSON
-list of objects as described, with the unit set to "cycles"."""
-
-
-class CycleLifeTest(BaseModel):
-    cycles: float
-    temperature_c: float | None = None
-    charge_rate_c: float | None = None
-    discharge_rate_c: float | None = None
-    end_of_life_capacity_pct: float | None = None
-    conditions: str | None = None
+  "general": {{"manufacturer": {{"value": "...", "unit": null, "page": 1, "quote": "...", "confidence": "high"}}, "model": null, ...}},
+  "materials": {{...}},
+  "performance": {{"rated_capacity": [{{"value": 280, "unit": "Ah", "conditions": "0.5C", "page": 6, "quote": "..."}}], ...}},
+  "durability": {{...}},
+  "operating_conditions": {{...}}
+}}"""
 
 
-NUMERIC_FIELDS = [
-    "nominal_voltage_v", "max_charge_voltage_v", "discharge_cutoff_voltage_v",
-    "rated_capacity_ah", "energy_wh", "internal_resistance_mohm",
-    "max_charge_current_a", "max_discharge_current_a",
-    "weight_kg", "diameter_mm", "width_mm", "thickness_mm", "height_mm",
-    "charge_temp_min_c", "charge_temp_max_c",
-    "discharge_temp_min_c", "discharge_temp_max_c",
-    "storage_temp_min_c", "storage_temp_max_c",
-]
-CELL_FORMATS = {"cylindrical", "prismatic", "pouch"}
+def _iter_raw_evidence(result: dict):
+    """Yield (path, evidence_dict) for every evidence object in a raw result, tolerating bad shapes.
+
+    Works on the raw JSON rather than the parsed model so one malformed field never hides the rest.
+    Paths look like "performance.nominal_voltage" or "durability.cycle_life[1]".
+    """
+    for group, fields in result.items():
+        if not isinstance(fields, dict):
+            continue
+        for name, item in fields.items():
+            if isinstance(item, dict):
+                yield f"{group}.{name}", item
+            elif isinstance(item, list):
+                for i, ev in enumerate(item):
+                    if isinstance(ev, dict):
+                        yield f"{group}.{name}[{i}]", ev
 
 
 def validate(result: dict) -> list[str]:
-    """Return a list of problems with the structured fields (empty if all good)."""
-    problems = [f"missing field: {k}" for k in FIELDS if k not in result]
+    """Return a list of problems with the result's shape (empty if all good)."""
+    try:
+        parsed = DatasheetExtraction.model_validate(result)
+    except ValidationError as e:
+        # A Union field reports one error per member type; keep the first per field location.
+        seen, problems = set(), []
+        for err in e.errors():
+            loc = tuple(err["loc"])
+            key = loc[: loc.index("value") + 1] if "value" in loc else loc[:4]
+            if key not in seen:
+                seen.add(key)
+                shown = loc[: loc.index("value") + 1] if "value" in loc else loc
+                problems.append(f"{'.'.join(str(p) for p in shown)}: {err['msg']}")
+        return problems
 
-    for key in NUMERIC_FIELDS:
-        value = result.get(key, {}).get("value")
-        # bool is a subclass of int, so exclude it explicitly
-        if value is not None and (isinstance(value, bool) or not isinstance(value, (int, float))):
-            problems.append(f"{key}: expected a number, got {value!r}")
-
-    fmt = result.get("cell_format", {}).get("value")
-    if fmt is not None and fmt not in CELL_FORMATS:
-        problems.append(f"cell_format: expected one of {sorted(CELL_FORMATS)}, got {fmt!r}")
-
-    certs = result.get("certifications", {}).get("value")
-    if certs is not None and not (isinstance(certs, list) and all(isinstance(c, str) for c in certs)):
-        problems.append(f"certifications: expected a list of strings, got {certs!r}")
-
-    cycle_value = result.get("cycle_life", {}).get("value")
-    if cycle_value is not None:
-        if not isinstance(cycle_value, list):
-            problems.append(f"cycle_life: expected a list, got {type(cycle_value).__name__}")
-        else:
-            for i, item in enumerate(cycle_value):
-                try:
-                    CycleLifeTest.model_validate(item)
-                except ValidationError as e:
-                    problems.append(f"cycle_life[{i}]: {e.errors()[0]['loc']} {e.errors()[0]['msg']}")
+    problems = []
+    for group, group_value in parsed:
+        for name, item in group_value:
+            path = f"{group}.{name}"
+            evidences = item if isinstance(item, list) else [item]
+            for i, ev in enumerate(evidences):
+                if ev is None:
+                    continue
+                where = f"{path}[{i}]" if isinstance(item, list) else path
+                if path in NUMERIC_PATHS and isinstance(ev.value, str):
+                    problems.append(f"{where}: expected a number or range, got {ev.value!r}")
+                if ev.value is not None and (ev.quote is None or ev.page is None):
+                    problems.append(f"{where}: has a value but no page/quote")
     return problems
 
 
@@ -206,9 +189,14 @@ def extract(pdf_path: Path) -> tuple[dict, dict]:
     usage = {"input_tokens": response.usage.input_tokens,
              "output_tokens": response.usage.output_tokens}
     try:
-        return json.loads(text), usage
+        result = json.loads(text)
     except json.JSONDecodeError as e:
         raise ExtractionError(f"response was not valid JSON: {e}") from e
+    if not isinstance(result, dict):
+        raise ExtractionError(f"expected a JSON object, got {type(result).__name__}")
+    for _, ev in _iter_raw_evidence(result):
+        ev["document_id"] = pdf_path.name  # filled here, not by the model
+    return result, usage
 
 
 def _norm(s: str) -> str:
@@ -220,19 +208,20 @@ def _norm(s: str) -> str:
     return re.sub(r"\s+", "", s)
 
 
-def verify_quotes(result: dict, pdf_path: Path) -> list[str]:
-    """Check each non-null field's quote appears on the page it names.
+def verify_quotes(result: dict, pdf_path: Path) -> tuple[list[str], int]:
+    """Check each filled field's quote appears on the page it names.
 
     Quotes with '...' are split and every part must appear on that page.
-    Returns a list of problems (empty if all quotes check out).
+    Returns (problems, number_of_quotes_checked); problems is empty if all quotes check out.
     """
     pages = [_norm(p.extract_text() or "") for p in PdfReader(pdf_path).pages]
-    problems = []
-    for key, field in result.items():
+    problems, checked = [], 0
+    for key, field in _iter_raw_evidence(result):
         quote, page = field.get("quote"), field.get("page")
-        if field.get("value") in (None, []) and quote is None:
-            continue  # stated as absent (null or empty list): nothing to verify
-        if quote is None or not isinstance(page, int):
+        if field.get("value") is None and quote is None:
+            continue  # stated as absent: nothing to verify
+        checked += 1
+        if not isinstance(quote, str) or not isinstance(page, int):
             problems.append(f"{key}: has a value but no quote/page to check")
             continue
         if not 1 <= page <= len(pages):
@@ -244,7 +233,7 @@ def verify_quotes(result: dict, pdf_path: Path) -> list[str]:
         found = [i + 1 for i, t in enumerate(pages) if all(p in t for p in parts)]
         where = f"found on page {found}" if found else "not found anywhere in the PDF"
         problems.append(f"{key}: quote not on page {page} ({where}): {quote!r}")
-    return problems
+    return problems, checked
 
 
 def process_pdf(pdf_path: Path, out_dir: Path, *, verify: bool, verify_only: bool, force: bool) -> dict:
@@ -270,8 +259,7 @@ def process_pdf(pdf_path: Path, out_dir: Path, *, verify: bool, verify_only: boo
             out_path.write_text(json.dumps(result, indent=2, ensure_ascii=False))
         rec["warnings"] = validate(result)
         if verify or verify_only:
-            rec["verify_failures"] = verify_quotes(result, pdf_path)
-            rec["quotes_checked"] = sum(1 for f in result.values() if f.get("quote") is not None)
+            rec["verify_failures"], rec["quotes_checked"] = verify_quotes(result, pdf_path)
     except Exception as e:  # one bad file must not stop the batch
         rec["status"] = "failed"
         rec["error"] = f"{type(e).__name__}: {e}"
@@ -279,8 +267,16 @@ def process_pdf(pdf_path: Path, out_dir: Path, *, verify: bool, verify_only: boo
 
 
 def run_batch(args: argparse.Namespace) -> int:
-    """Process every PDF in args.dir. Returns the process exit code (1 if anything failed)."""
+    """Process every PDF in args.dir (or just the devset). Returns the exit code (1 if anything failed)."""
     pdfs = sorted(args.dir.glob("*.pdf"))
+    if args.devset:
+        if not DEVSET_PATH.exists():
+            sys.exit(f"{DEVSET_PATH} not found")
+        wanted = [entry["file"] for entry in json.loads(DEVSET_PATH.read_text())["files"]]
+        missing = sorted(set(wanted) - {p.name for p in pdfs})
+        if missing:
+            sys.exit(f"Devset files not found in {args.dir}: {', '.join(missing)}")
+        pdfs = [p for p in pdfs if p.name in set(wanted)]
     if not pdfs:
         sys.exit(f"No PDFs found in {args.dir}")
     out_dir = Path("outputs")
@@ -334,26 +330,29 @@ def run_batch(args: argparse.Namespace) -> int:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Extract battery passport fields from datasheet PDFs.")
-    parser.add_argument("pdf", type=Path, nargs="?", help="path to the datasheet PDF (omit with --all)")
+    parser.add_argument("pdf", type=Path, nargs="?", help="path to the datasheet PDF (omit with --all/--devset)")
     parser.add_argument("--verify", action="store_true",
                         help="after extracting, check each quote appears on its stated page")
     parser.add_argument("--verify-only", action="store_true",
                         help="skip the API call; verify the existing outputs/<name>.json against the PDF")
     parser.add_argument("--all", action="store_true",
                         help="batch mode: process every PDF in --dir, skipping ones that already have output")
+    parser.add_argument("--devset", action="store_true",
+                        help="batch mode on only the files listed in evals/devset.json")
     parser.add_argument("--dir", type=Path, default=Path("documents"),
-                        help="folder of PDFs for --all (default: documents)")
+                        help="folder of PDFs for --all/--devset (default: documents)")
     parser.add_argument("--limit", type=int, metavar="N",
-                        help="with --all: make at most N new API calls this run")
+                        help="in batch mode: make at most N new API calls this run")
     parser.add_argument("--force", action="store_true",
-                        help="with --all: re-extract even if outputs/<name>.json exists")
+                        help="in batch mode: re-extract even if outputs/<name>.json exists")
     args = parser.parse_args()
 
-    if args.all == (args.pdf is not None):
-        parser.error("give either a PDF path or --all (not both, not neither)")
-    if not args.all and (args.limit is not None or args.force):
-        parser.error("--limit and --force only apply with --all")
-    if args.all:
+    batch = args.all or args.devset
+    if batch == (args.pdf is not None):
+        parser.error("give either a PDF path or --all/--devset (not both, not neither)")
+    if not batch and (args.limit is not None or args.force):
+        parser.error("--limit and --force only apply with --all or --devset")
+    if batch:
         sys.exit(run_batch(args))
 
     pdf_path = args.pdf
@@ -382,10 +381,9 @@ def main() -> None:
         print(f"\nSaved to {out_path}", file=sys.stderr)
 
     if args.verify or args.verify_only:
-        problems = verify_quotes(result, pdf_path)
+        problems, checked = verify_quotes(result, pdf_path)
         for problem in problems:
             print(f"VERIFY FAILED: {problem}", file=sys.stderr)
-        checked = sum(1 for f in result.values() if f.get("quote") is not None)
         print(f"Verified {checked - len(problems)}/{checked} quotes against {pdf_path}", file=sys.stderr)
         if problems:
             sys.exit(1)

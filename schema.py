@@ -11,22 +11,37 @@ Values that depend on test conditions (cycle life, currents) are lists, so
 "6000 cycles at 25 C" and "2500 cycles at 45 C" stay separate entries.
 """
 
-from typing import Optional, Union
+from typing import Literal, Optional, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # ---------- building blocks ----------
 
+# extra="forbid" on Range and Dimensions: both are all-optional, so without it
+# {"min": 0, "max": 55} could silently validate as an empty Dimensions inside the
+# Evidence.value Union.
+
 class Range(BaseModel):
+    """A min-max range as stated, e.g. a temperature range or '0.1~0.6 mOhm'."""
+
+    model_config = ConfigDict(extra="forbid")
+
     min: Optional[float] = None
     max: Optional[float] = None
 
 
 class Dimensions(BaseModel):
+    """Outer dimensions in the unit stated. Cylindrical cells: diameter + length/height.
+    Prismatic and pouch cells: length, width (or thickness) and height."""
+
+    model_config = ConfigDict(extra="forbid")
+
     length: Optional[float] = None
     width: Optional[float] = None
+    thickness: Optional[float] = None
     height: Optional[float] = None
+    diameter: Optional[float] = None
 
 
 class Evidence(BaseModel):
@@ -40,10 +55,26 @@ class Evidence(BaseModel):
         None,
         description="Test or use conditions attached to this value, e.g. '25 degC, 0.5C/0.5C, to 80% capacity'",
     )
-    page: Optional[int] = Field(None, description="1-based page number of the quote")
+    document_id: Optional[str] = Field(
+        None, description="Which uploaded document the value came from (filled by the pipeline, not the model)"
+    )
+    page: Optional[int] = Field(
+        None,
+        description="Position of the page in the PDF file, first page = 1. Ignore printed page numbers.",
+    )
     quote: Optional[str] = Field(
         None,
         description="Exact text copied character for character from ONE table cell or sentence on that page",
+    )
+    confidence: Optional[Literal["high", "medium", "low"]] = Field(
+        None,
+        description="high: stated directly in a labelled cell or sentence; medium: needed interpreting "
+        "a table layout or drawing; low: ambiguous or contradictory in the document",
+    )
+    note: Optional[str] = Field(
+        None,
+        description="Short caveat: a tolerance, 'only a C-rate is given', a conflict between two places. "
+        "Never put the value itself here.",
     )
 
 
@@ -59,7 +90,8 @@ class GeneralInfo(BaseModel):
     model: One = Field(None, description="Model name or part number")
     battery_type: One = Field(None, description="Cell, module or pack; form factor (prismatic, pouch, cylindrical)")
     weight: One = Field(None, description="Mass, unit as stated (g or kg)")
-    dimensions: One = Field(None, description="Length, width, height; note whether terminals are included")
+    dimensions: One = Field(None, description="Outer dimensions as an object with any of length, width, thickness, height, diameter "
+                    "(cylindrical cells: diameter and height); say in 'note' whether terminals are included")
 
 
 class Materials(BaseModel):
@@ -77,7 +109,11 @@ class Performance(BaseModel):
     rated_energy: One = Field(None, description="Rated energy in Wh or kWh, only if stated, never calculated")
     max_charge_current: Many = Field(default_factory=list, description="Maximum continuous charge current, with conditions")
     max_discharge_current: Many = Field(default_factory=list, description="Maximum continuous and pulse discharge current, with duration and conditions")
-    internal_resistance: Many = Field(default_factory=list, description="Initial internal resistance (AC 1 kHz or DC), with method")
+    internal_resistance: Many = Field(
+        default_factory=list,
+        description="Initial internal resistance (AC 1 kHz or DC), with method. If given as a range such "
+        "as '0.1~0.6', use a Range value {min, max}",
+    )
     self_discharge_rate: One = Field(None, description="Self-discharge or capacity retention during storage")
     round_trip_efficiency: One = Field(None, description="Round-trip energy efficiency if stated")
 
@@ -102,6 +138,24 @@ class DatasheetExtraction(BaseModel):
     performance: Performance = Field(default_factory=Performance)
     durability: Durability = Field(default_factory=Durability)
     operating_conditions: OperatingConditions = Field(default_factory=OperatingConditions)
+
+
+# ---------- constants shared by extract.py and the eval scripts ----------
+
+# Fields whose value must be a number (or Range/Dimensions), never free text. Evidence.value
+# also allows str (for things like chemistry), so this is checked separately in extract.validate().
+NUMERIC_PATHS = {
+    "general.weight",
+    "performance.nominal_voltage",
+    "performance.min_voltage",
+    "performance.max_voltage",
+    "performance.rated_energy",
+    "performance.self_discharge_rate",
+    "performance.round_trip_efficiency",
+    "durability.calendar_life",
+    "operating_conditions.charge_temperature",
+    "operating_conditions.discharge_temperature",
+}
 
 
 if __name__ == "__main__":
