@@ -31,30 +31,36 @@ python extract.py --all --verify-only        # re-check saved outputs, no API ca
 python extract.py --all --force              # re-extract everything
 ```
 
-Example field in the output:
+`--devset` processes only the 10 files in [evals/devset.json](evals/devset.json) (`make devset`).
+
+Example field in the output (`outputs/<name>.json`, grouped as general / materials / performance /
+durability / operating_conditions):
 
 ```json
-"nominal_voltage_v": {
-  "value": 3.2,
-  "unit": "V",
-  "page": 6,
-  "quote": "Typical Voltage 3.2V"
+"performance": {
+  "nominal_voltage": {
+    "value": 3.2, "unit": "V", "page": 6,
+    "quote": "Typical Voltage 3.2V", "confidence": "high", "document_id": "LF280K.pdf"
+  }
 }
 ```
 
-If the datasheet doesn't state a value, it is `null` with a `note`; nothing is guessed or calculated.
+Values that depend on test conditions (capacity, cycle life, currents) are lists with one entry per
+condition. If the datasheet doesn't state a value it is `null`; nothing is guessed or calculated.
+Units are kept as stated.
 
 ## Fields (25)
 
-- **Identity:** manufacturer, model, chemistry, cell format
-- **Electrical:** nominal / max charge / cut-off voltage, rated capacity, energy, internal resistance,
-  max charge and discharge current
-- **Physical:** weight, diameter (cylindrical) or width and thickness (prismatic/pouch), height
-- **Lifetime:** cycle life (a list of test conditions), charge / discharge / storage temperature ranges
-- **Compliance:** certifications
+- **General:** manufacturer, model, battery type, weight, dimensions
+- **Materials:** chemistry, cathode, anode, electrolyte
+- **Performance:** rated capacity, nominal / min / max voltage, rated energy, max charge and discharge
+  current, internal resistance, self-discharge, round-trip efficiency
+- **Durability:** cycle life, end-of-life threshold, calendar life
+- **Operating conditions:** charge, discharge and storage temperature ranges
 
-The list is defined in `FIELDS` in [extract.py](extract.py). It is drawn from the Battery Pass data
-model and Regulation (EU) 2023/1542 Annex XIII, limited to what datasheets typically contain.
+The fields are defined in [schema.py](schema.py) (`python schema.py` prints the JSON Schema).
+[docs/field_map.md](docs/field_map.md) maps each one to the Battery Pass data model; the passport
+fields datasheets rarely contain (carbon footprint, recycled content, due diligence) are out of scope here.
 
 ## Datasheets
 
