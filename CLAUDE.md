@@ -3,14 +3,23 @@
 Sends a battery cell datasheet PDF to the Claude API and gets back structured fields for an EU
 battery passport: each field has a value, unit, page number and a verbatim quote from that page.
 
+## Ground rules
+
+- Never run an extraction or call the Anthropic API without asking Kevin first; reuse the saved
+  files in `outputs/` instead. That covers `python -m battery_passport` without `--verify-only`,
+  `--all`/`--devset` runs that need new files, `--force`, and `make devset` / `make batch`.
+  `--verify-only` and `make devset-verify` are free and fine to run.
+
 ## Run
+
+Reminder: commands below that call the API need Kevin's OK first (see Ground rules).
 
 System `python` is conda and lacks the dependencies. Use the project venv:
 
 ```
-.venv/bin/python extract.py documents/<name>.pdf              # extract -> outputs/<name>.json
-.venv/bin/python extract.py documents/<name>.pdf --verify     # extract, then check quotes
-.venv/bin/python extract.py documents/<name>.pdf --verify-only  # re-check saved JSON, no API call
+.venv/bin/python -m battery_passport documents/<name>.pdf              # extract -> outputs/<name>.json
+.venv/bin/python -m battery_passport documents/<name>.pdf --verify     # extract, then check quotes
+.venv/bin/python -m battery_passport documents/<name>.pdf --verify-only  # re-check saved JSON, no API call
 ```
 
 Batch mode runs every PDF in `documents/` (sequentially; one bad file never stops the run).
@@ -18,11 +27,11 @@ Batch mode runs every PDF in `documents/` (sequentially; one bad file never stop
 `label_day3` marks the 5 to hand-label). `make devset` / `make devset-verify` wrap this.
 
 ```
-.venv/bin/python extract.py --devset --verify          # just the dev set
-.venv/bin/python extract.py --all --verify --limit 5   # at most 5 new API calls this run
-.venv/bin/python extract.py --all --verify             # the rest; files with output are reused
-.venv/bin/python extract.py --all --verify-only        # free: re-check saved outputs only
-.venv/bin/python extract.py --all --force              # re-extract everything (costs tokens)
+.venv/bin/python -m battery_passport --devset --verify          # just the dev set
+.venv/bin/python -m battery_passport --all --verify --limit 5   # at most 5 new API calls this run
+.venv/bin/python -m battery_passport --all --verify             # the rest; files with output are reused
+.venv/bin/python -m battery_passport --all --verify-only        # free: re-check saved outputs only
+.venv/bin/python -m battery_passport --all --force              # re-extract everything (costs tokens)
 ```
 
 Existing `outputs/<name>.json` is reused (resume-friendly), so `--limit` only counts new API
@@ -35,12 +44,22 @@ its stated page.
 
 ## Layout
 
-- `schema.py`: **the single source of truth for the fields**: nested Pydantic models
-  (`DatasheetExtraction` > `GeneralInfo`, `Materials`, `Performance`, `Durability`,
-  `OperatingConditions`), each field an `Evidence` (or list of them). `python schema.py` prints the
-  JSON Schema. `NUMERIC_PATHS` lists fields whose value must be a number or range, not text.
-- `extract.py`: the prompt (built from schema.py's descriptions), `extract()`, `validate()`,
-  `verify_quotes()`, batch mode.
+All Python lives in the `battery_passport/` package. Run everything **from the repo root**
+(`documents/`, `outputs/` and `evals/` are relative paths). New code goes in a new module in
+the package, one job per module; don't add `.py` files at the repo root.
+
+- `battery_passport/schema.py`: **the single source of truth for the fields**: nested Pydantic
+  models (`DatasheetExtraction` > `GeneralInfo`, `Materials`, `Performance`, `Durability`,
+  `OperatingConditions`), each field an `Evidence` (or list of them).
+  `python -m battery_passport.schema` prints the JSON Schema. `NUMERIC_PATHS` lists fields whose
+  value must be a number or range, not text.
+- `battery_passport/extract.py`: the prompt (built from schema.py's descriptions) and the Claude
+  call, `extract()`.
+- `battery_passport/validate.py`: plain-Python checks, no AI: `validate()` (shape against the
+  schema) and `verify_quotes()` (each quote appears on its stated page). Normalization and
+  plausibility rules (Day 6+) belong here or in a sibling module.
+- `battery_passport/cli.py`: argument parsing, `process_pdf()`, `run_batch()` and the summary.
+  `__main__.py` makes `python -m battery_passport` work.
 - `docs/blueprint.md`: the 14-day project plan (local only, gitignored, so it may be absent in a
   fresh clone). `docs/field_map.md`: how each schema field maps to the Battery Pass data model.
 - `evals/devset.json`: the 10 dev datasheets. Gold labels (Day 3) go in `evals/labels/<name>.json`.
