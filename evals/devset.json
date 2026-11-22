@@ -3,19 +3,19 @@
   "files": [
     {
       "file": "LF280K.pdf",
-      "manufacturer": "Lf280K.Pdf",
+      "manufacturer": "EVE",
       "language": "EN",
       "layout": "prismatic LFP; clean spec tables; already verified by hand",
       "label_day3": true,
-      "source_url": null
+      "source_url": "https://akkudoktor.net/uploads/short-url/maYfKTLNOcRNqlYZNRluaz43RTL.pdf"
     },
     {
       "file": "LG_INR18650MH1.pdf",
-      "manufacturer": "Lg",
+      "manufacturer": "LG",
       "language": "EN",
       "layout": "cylindrical NMC; short spec sheet, test-condition footnotes",
       "label_day3": true,
-      "source_url": null
+      "source_url": "https://e2e.ti.com/cfs-file/__key/communityserver-discussions-components-files/196/INR18650MH1_5F00_Rev1.pdf"
     },
     {
       "file": "A123_ANR26650M1B.pdf",
