@@ -10,3 +10,6 @@ outputs/
 # Third-party manufacturer datasheets: not redistributed. Only the manifest is tracked.
 documents/*
 !documents/SOURCES.md
+
+# Local project plan (business notes), not published
+docs/blueprint.md

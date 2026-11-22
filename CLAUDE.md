@@ -13,6 +13,20 @@ System `python` is conda and lacks the dependencies. Use the project venv:
 .venv/bin/python extract.py documents/<name>.pdf --verify-only  # re-check saved JSON, no API call
 ```
 
+Batch mode runs every PDF in `documents/` (sequentially; one bad file never stops the run):
+
+```
+.venv/bin/python extract.py --all --verify --limit 5   # at most 5 new API calls this run
+.venv/bin/python extract.py --all --verify             # the rest; files with output are reused
+.venv/bin/python extract.py --all --verify-only        # free: re-check saved outputs only
+.venv/bin/python extract.py --all --force              # re-extract everything (costs tokens)
+```
+
+Existing `outputs/<name>.json` is reused (resume-friendly), so `--limit` only counts new API
+calls. Each run prints a summary table and writes `outputs/_batch_summary.json` (skip files
+starting with `_` when aggregating outputs). Exit code is 1 on any failure or verify failure.
+Try `--limit 3` first: each file is roughly 5k-50k input tokens.
+
 Needs `ANTHROPIC_API_KEY` in `.env` (see `.env.example`). `--verify` exits 1 if any quote is not on
 its stated page.
 
@@ -41,6 +55,11 @@ its stated page.
   `content[0]`.
 - `validate()` only warns on shape problems (it doesn't abort), so one bad field doesn't waste an
   API call. Quote verification is a separate opt-in step.
+- Page numbers mean position in the PDF file (first page = 1), not printed page labels; the prompt
+  says so because the model was off by one on CALB_CA100 before.
+- Some PDFs' text layers leak glyph names (`/Oslash.sc` for Ø, `Speci/f_ications`); `_norm()`
+  maps these. If `--verify` fails on a quote that is plainly on the page, check the raw
+  `pypdf` text first; it is often an extraction artefact, not a model error.
 - Output wording varies between runs (e.g. quotes, notes). Run `--verify` on every extraction.
 - `--verify` checks quote placement, not truth. Values still need a human spot-check.
 - The Battery Pass longlist is not in the repo. The field list was assembled from the Battery Pass

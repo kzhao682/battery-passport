@@ -21,6 +21,16 @@ python extract.py path/to/datasheet.pdf --verify        # extract, then check qu
 python extract.py path/to/datasheet.pdf --verify-only   # re-check saved JSON, no API call
 ```
 
+Batch mode runs every PDF in `documents/` and prints a summary table (also saved to
+`outputs/_batch_summary.json`). Files that already have output are reused, so you can resume:
+
+```
+python extract.py --all --verify --limit 5   # at most 5 new API calls this run
+python extract.py --all --verify             # the rest
+python extract.py --all --verify-only        # re-check saved outputs, no API calls
+python extract.py --all --force              # re-extract everything
+```
+
 Example field in the output:
 
 ```json

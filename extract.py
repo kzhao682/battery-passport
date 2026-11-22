@@ -11,6 +11,7 @@ Writes the result to outputs/<datasheet-name>.json and prints it.
 import argparse
 import base64
 import json
+import logging
 import re
 import sys
 import unicodedata
@@ -22,6 +23,7 @@ from pydantic import BaseModel, ValidationError
 from pypdf import PdfReader
 
 load_dotenv()  # reads ANTHROPIC_API_KEY from .env
+logging.getLogger("pypdf").setLevel(logging.ERROR)  # silence per-font encoding warnings
 
 MODEL = "claude-sonnet-5-5"
 
@@ -92,6 +94,10 @@ or add words that are not there. If the value and its label are in separate cell
 the cell that holds the value, or use "..." between two short exact fragments. A shorter exact
 quote is better than a longer inexact one.
 
+Page numbers: "page" is the position of the page in the PDF file, counting the first page of
+the file as 1. Ignore any page numbers printed on the pages themselves (cover pages, roman
+numerals and "Page X of Y" footers often do not match the file position).
+
 Fields:
 {json.dumps(FIELDS, indent=2)}
 
@@ -158,7 +164,12 @@ def validate(result: dict) -> list[str]:
     return problems
 
 
-def extract(pdf_path: Path) -> dict:
+class ExtractionError(Exception):
+    """The model response could not be turned into a result (e.g. truncated)."""
+
+
+def extract(pdf_path: Path) -> tuple[dict, dict]:
+    """Send one PDF to Claude. Returns (result, {"input_tokens": n, "output_tokens": n})."""
     pdf_data = base64.standard_b64encode(pdf_path.read_bytes()).decode("utf-8")
 
     client = anthropic.Anthropic()
@@ -184,7 +195,7 @@ def extract(pdf_path: Path) -> dict:
     )
 
     if response.stop_reason == "max_tokens":
-        sys.exit("Response was cut off at max_tokens; raise max_tokens in extract().")
+        raise ExtractionError("response was cut off at max_tokens; raise max_tokens in extract()")
 
     # The response may begin with a thinking block; take the text block.
     text = next(b.text for b in response.content if b.type == "text").strip()
@@ -192,15 +203,21 @@ def extract(pdf_path: Path) -> dict:
     if text.startswith("```"):
         text = text.split("\n", 1)[1].rsplit("```", 1)[0]
 
-    usage = response.usage
-    print(f"Tokens: {usage.input_tokens} in, {usage.output_tokens} out", file=sys.stderr)
-    return json.loads(text)
+    usage = {"input_tokens": response.usage.input_tokens,
+             "output_tokens": response.usage.output_tokens}
+    try:
+        return json.loads(text), usage
+    except json.JSONDecodeError as e:
+        raise ExtractionError(f"response was not valid JSON: {e}") from e
 
 
 def _norm(s: str) -> str:
     """Normalise text for quote matching: ignore whitespace, case and unicode variants."""
-    s = unicodedata.normalize("NFKC", s).replace("℃", "°C")  # ℃ -> °C
-    return re.sub(r"\s+", "", s).lower()
+    s = unicodedata.normalize("NFKC", s).replace("℃", "°C").lower()  # ℃ -> °C
+    # Some PDFs' text layers leak raw glyph names: "/Oslash.sc" for Ø, "Speci/f_ications" for fi.
+    s = re.sub(r"/oslash(?:\.[a-z]+)?", "ø", s)
+    s = re.sub(r"/((?:f|i|l|t)(?:_(?:f|i|l|t))+)", lambda m: m.group(1).replace("_", ""), s)
+    return re.sub(r"\s+", "", s)
 
 
 def verify_quotes(result: dict, pdf_path: Path) -> list[str]:
@@ -230,14 +247,114 @@ def verify_quotes(result: dict, pdf_path: Path) -> list[str]:
     return problems
 
 
+def process_pdf(pdf_path: Path, out_dir: Path, *, verify: bool, verify_only: bool, force: bool) -> dict:
+    """Extract (or reuse saved output for) one PDF and return a summary record. Never raises.
+
+    status: "extracted" (API call made), "reused" (saved output kept), "missing" (--verify-only
+    but no saved output) or "failed".
+    """
+    rec = {"file": pdf_path.name, "status": "extracted", "error": None, "warnings": [],
+           "verify_failures": [], "quotes_checked": None, "input_tokens": 0, "output_tokens": 0}
+    out_path = out_dir / f"{pdf_path.stem}.json"
+    try:
+        if verify_only or (out_path.exists() and not force):
+            if not out_path.exists():
+                rec["status"] = "missing"
+                return rec
+            result = json.loads(out_path.read_text())
+            rec["status"] = "reused"
+        else:
+            result, usage = extract(pdf_path)
+            rec.update(usage)
+            out_dir.mkdir(exist_ok=True)
+            out_path.write_text(json.dumps(result, indent=2, ensure_ascii=False))
+        rec["warnings"] = validate(result)
+        if verify or verify_only:
+            rec["verify_failures"] = verify_quotes(result, pdf_path)
+            rec["quotes_checked"] = sum(1 for f in result.values() if f.get("quote") is not None)
+    except Exception as e:  # one bad file must not stop the batch
+        rec["status"] = "failed"
+        rec["error"] = f"{type(e).__name__}: {e}"
+    return rec
+
+
+def run_batch(args: argparse.Namespace) -> int:
+    """Process every PDF in args.dir. Returns the process exit code (1 if anything failed)."""
+    pdfs = sorted(args.dir.glob("*.pdf"))
+    if not pdfs:
+        sys.exit(f"No PDFs found in {args.dir}")
+    out_dir = Path("outputs")
+    records, api_calls = [], 0
+    print(f"Batch: {len(pdfs)} PDFs in {args.dir}", file=sys.stderr)
+
+    try:
+        for i, pdf in enumerate(pdfs, 1):
+            out_exists = (out_dir / f"{pdf.stem}.json").exists()
+            will_call_api = not args.verify_only and (args.force or not out_exists)
+            if will_call_api and args.limit is not None and api_calls >= args.limit:
+                continue  # --limit reached: leave the rest for a later run
+            rec = process_pdf(pdf, out_dir, verify=args.verify, verify_only=args.verify_only,
+                              force=args.force)
+            api_calls += rec["status"] in ("extracted", "failed") and will_call_api
+            records.append(rec)
+            flags = (f"{len(rec['warnings'])} warn, {len(rec['verify_failures'])} verify-fail"
+                     if rec["status"] != "failed" else rec["error"])
+            print(f"[{i}/{len(pdfs)}] {pdf.name}: {rec['status']} ({flags})", file=sys.stderr)
+    except KeyboardInterrupt:
+        print("\nInterrupted: printing summary of what finished.", file=sys.stderr)
+
+    # --- summary ---
+    width = max((len(r["file"]) for r in records), default=4)
+    print(f"\n{'file':<{width}}  {'status':<9}  warn  vfail  tokens in/out")
+    for r in records:
+        tokens = f"{r['input_tokens']}/{r['output_tokens']}" if r["input_tokens"] else "-"
+        vfail = len(r["verify_failures"]) if r["quotes_checked"] is not None else "-"
+        print(f"{r['file']:<{width}}  {r['status']:<9}  {len(r['warnings']):>4}  {vfail!s:>5}  {tokens}")
+
+    count = lambda s: sum(1 for r in records if r["status"] == s)
+    n_warn = sum(1 for r in records if r["warnings"])
+    n_vfail = sum(1 for r in records if r["verify_failures"])
+    tin = sum(r["input_tokens"] for r in records)
+    tout = sum(r["output_tokens"] for r in records)
+    print(f"\n{len(records)}/{len(pdfs)} processed: {count('extracted')} extracted, "
+          f"{count('reused')} reused, {count('missing')} missing output, {count('failed')} failed")
+    print(f"{n_warn} with validation warnings, {n_vfail} with quote-verification failures")
+    print(f"Tokens used this run: {tin:,} in, {tout:,} out")
+    if len(records) < len(pdfs):
+        print(f"{len(pdfs) - len(records)} not processed (--limit or interrupt); re-run to continue")
+    for r in records:
+        if r["status"] == "failed":
+            print(f"FAILED {r['file']}: {r['error']}")
+
+    out_dir.mkdir(exist_ok=True)
+    (out_dir / "_batch_summary.json").write_text(json.dumps(records, indent=2, ensure_ascii=False))
+    print(f"Details in {out_dir / '_batch_summary.json'}", file=sys.stderr)
+    return 1 if count("failed") or n_vfail else 0
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Extract battery passport fields from a datasheet PDF.")
-    parser.add_argument("pdf", type=Path, help="path to the datasheet PDF")
+    parser = argparse.ArgumentParser(description="Extract battery passport fields from datasheet PDFs.")
+    parser.add_argument("pdf", type=Path, nargs="?", help="path to the datasheet PDF (omit with --all)")
     parser.add_argument("--verify", action="store_true",
                         help="after extracting, check each quote appears on its stated page")
     parser.add_argument("--verify-only", action="store_true",
                         help="skip the API call; verify the existing outputs/<name>.json against the PDF")
+    parser.add_argument("--all", action="store_true",
+                        help="batch mode: process every PDF in --dir, skipping ones that already have output")
+    parser.add_argument("--dir", type=Path, default=Path("documents"),
+                        help="folder of PDFs for --all (default: documents)")
+    parser.add_argument("--limit", type=int, metavar="N",
+                        help="with --all: make at most N new API calls this run")
+    parser.add_argument("--force", action="store_true",
+                        help="with --all: re-extract even if outputs/<name>.json exists")
     args = parser.parse_args()
+
+    if args.all == (args.pdf is not None):
+        parser.error("give either a PDF path or --all (not both, not neither)")
+    if not args.all and (args.limit is not None or args.force):
+        parser.error("--limit and --force only apply with --all")
+    if args.all:
+        sys.exit(run_batch(args))
 
     pdf_path = args.pdf
     if not pdf_path.exists():
@@ -251,7 +368,11 @@ def main() -> None:
             sys.exit(f"{out_path} not found; run without --verify-only first")
         result = json.loads(out_path.read_text())
     else:
-        result = extract(pdf_path)
+        try:
+            result, usage = extract(pdf_path)
+        except ExtractionError as e:
+            sys.exit(f"Extraction failed: {e}")
+        print(f"Tokens: {usage['input_tokens']} in, {usage['output_tokens']} out", file=sys.stderr)
         for problem in validate(result):
             print(f"WARNING: {problem}", file=sys.stderr)
 
