@@ -37,3 +37,25 @@ def test_gold_matches_itself_perfectly():
     g = e(3.2, "V")
     s = summarize({"performance.nominal_voltage": score_field(g, g)})
     assert s["recall"] == 1 and s["precision"] == 1
+
+
+def test_wording_differences_do_not_count_as_wrong_for_descriptive_fields():
+    path = "materials.chemistry"
+    for gold, out in [
+        ("LFP (lithium iron phosphate)", "Lithium iron phosphate (LFP)"),
+        ("LFP", "LFP (lithium iron phosphate)"),
+        ("Na-ion", "Sodium-ion (Na-ion)"),
+    ]:
+        assert score_field(e(gold), e(out), path)["correct"] == 1, (gold, out)
+    assert score_field(e("Shenzhen Z Co.,Ltd."), e("Shenzhen Z Co., Ltd. (深圳)"), "general.manufacturer")["correct"] == 1
+
+
+def test_loose_matching_still_rejects_different_things():
+    assert score_field(e("GWL a.s."), e("Winston"), "general.manufacturer")["wrong"] == 1
+    assert score_field(e("Cell, prismatic"), e("LYP type battery cell"), "general.battery_type")["wrong"] == 1
+    assert score_field(e("NMC"), e("LFP"), "materials.chemistry")["wrong"] == 1
+
+
+def test_model_number_stays_strict_and_unpathed_calls_stay_strict():
+    assert score_field(e("LF280K"), e("LF280K-2"), "general.model")["wrong"] == 1
+    assert score_field(e("LFP"), e("LFP (lithium iron phosphate)"))["wrong"] == 1

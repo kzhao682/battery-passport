@@ -12,6 +12,7 @@ Per field the outcome is one of:
   missed        gold has a value, model returned null
   hallucinated  gold is null, model returned a value
   both_null     gold null, model null (counted as correct)
+Descriptive text fields (LOOSE_TEXT_PATHS) match on meaning, not exact wording: see loosely_equal.
 List fields are matched entry by entry on value + unit; unmatched gold entries are missed,
 unmatched model entries are hallucinated. Units are compared as stated; no conversion (Day 6).
 """
@@ -22,6 +23,25 @@ import sys
 from pathlib import Path
 
 from .labels import LABELS_DIR, field_paths
+
+# Descriptive text fields where wording differs but meaning is the same ("LFP" vs
+# "Lithium iron phosphate (LFP)"). general.model stays strict: "LF280K" must not match "LF280K-2".
+LOOSE_TEXT_PATHS = {
+    "general.manufacturer",
+    "general.battery_type",
+    "materials.chemistry",
+    "materials.cathode_material",
+    "materials.anode_material",
+    "materials.electrolyte",
+}
+SYNONYMS = {
+    "lithium iron phosphate": "lfp",
+    "sodium-ion": "na-ion",
+    "sodium ion": "na-ion",
+    "nickel manganese cobalt": "nmc",
+    "lithium-ion": "li-ion",
+    "lithium ion": "li-ion",
+}
 
 OUTPUTS_DIR = Path("outputs")
 RESULTS_DIR = Path("evals/results")
@@ -38,7 +58,20 @@ def _unit(u) -> str:
     return _text(u or "").replace("℃", "°c").replace("degc", "°c")
 
 
-def values_equal(a, b) -> bool:
+def _tokens(s) -> set[str]:
+    t = _text(s)
+    for long, short in SYNONYMS.items():
+        t = t.replace(long, short)
+    return set(re.findall(r"[^\W_]+", t))  # letters/digits only; keeps Chinese characters
+
+
+def loosely_equal(a, b) -> bool:
+    """Same meaning, different wording: one string's words are all contained in the other's."""
+    ta, tb = _tokens(a), _tokens(b)
+    return bool(ta and tb) and (ta <= tb or tb <= ta)
+
+
+def values_equal(a, b, loose: bool = False) -> bool:
     """Numbers within tolerance; dicts (Range/Dimensions) key by key; text case/space-insensitive."""
     if isinstance(a, dict) and isinstance(b, dict):
         keys = {k for k, v in {**a, **b}.items() if a.get(k) is not None or b.get(k) is not None}
@@ -49,11 +82,13 @@ def values_equal(a, b) -> bool:
         return a == b
     if isinstance(a, (int, float)) and isinstance(b, (int, float)):
         return abs(a - b) <= REL_TOL * max(1.0, abs(a), abs(b))
-    return _text(a) == _text(b)
+    if _text(a) == _text(b):
+        return True
+    return loose and isinstance(a, str) and isinstance(b, str) and loosely_equal(a, b)
 
 
-def entries_match(gold: dict, out: dict) -> bool:
-    if not values_equal(gold.get("value"), out.get("value")):
+def entries_match(gold: dict, out: dict, path: str | None = None) -> bool:
+    if not values_equal(gold.get("value"), out.get("value"), loose=path in LOOSE_TEXT_PATHS):
         return False
     # Unit only matters when the gold label states one.
     return not gold.get("unit") or _unit(gold["unit"]) == _unit(out.get("unit"))
@@ -71,7 +106,7 @@ def _as_list(x) -> list[dict]:
 
 # ---------- scoring one field / one file ----------
 
-def score_field(gold, out) -> dict:
+def score_field(gold, out, path: str | None = None) -> dict:
     """Return {'correct','wrong','missed','hallucinated','both_null','page_ok','page_total'} counts."""
     g, o = _as_list(gold), _as_list(out)
     r = dict(correct=0, wrong=0, missed=0, hallucinated=0, both_null=0, page_ok=0, page_total=0)
@@ -81,7 +116,7 @@ def score_field(gold, out) -> dict:
     unused = list(o)
     leftover_gold = []
     for ge in g:
-        hit = next((oe for oe in unused if entries_match(ge, oe)), None)
+        hit = next((oe for oe in unused if entries_match(ge, oe, path)), None)
         if hit is None:
             leftover_gold.append(ge)
             continue
@@ -103,7 +138,7 @@ def score_file(gold: dict, out: dict) -> dict[str, dict]:
     results = {}
     for path, _ in field_paths():
         group, name = path.split(".")
-        results[path] = score_field(gold.get(group, {}).get(name), out.get(group, {}).get(name))
+        results[path] = score_field(gold.get(group, {}).get(name), out.get(group, {}).get(name), path)
     return results
 
 
