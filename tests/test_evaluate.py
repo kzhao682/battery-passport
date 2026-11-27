@@ -65,3 +65,19 @@ def test_ohm_symbol_and_spelled_out_unit_match():
     for symbol in ("mΩ", "mΩ"):  # Greek capital omega and the ohm sign
         assert score_field(e(0.25, "mOhm"), e(0.25, symbol))["correct"] == 1
     assert score_field(e(0.25, "mOhm"), e(0.25, "Ω"))["wrong"] == 1
+
+
+def test_battery_type_only_needs_the_same_form_factor():
+    path = "general.battery_type"
+    for out in [
+        "Cell, cylindrical (18650), Na-ion",
+        "Cylindrical rechargeable lithium ion battery",
+        "Na-ion cylindrical cell (18650), High Rate type",
+    ]:
+        assert score_field(e("Cell, cylindrical"), e(out), path)["correct"] == 1, out
+
+
+def test_battery_type_rejects_other_form_factor_assembly_or_none():
+    path = "general.battery_type"
+    for out in ["Cell, prismatic", "Cylindrical battery pack", "LYP type battery cell", "Prismatic or cylindrical cell"]:
+        assert score_field(e("Cell, cylindrical"), e(out), path)["wrong"] == 1, out

@@ -81,7 +81,8 @@ the package, one job per module; don't add `.py` files at the repo root.
   `battery_passport/evaluate.py`: scores `outputs/` against `evals/labels/` (`make eval`, free);
   results go to `evals/results/` (tracked; `make eval`, `eval-v1`, `eval-v2`). Descriptive text
   fields match loosely (`LOOSE_TEXT_PATHS`); `general.model`, numbers and units do not, except
-  that the ohm symbol equals "Ohm".
+  that the ohm symbol equals "Ohm". `general.battery_type` only needs the same form factor and no
+  module/pack conflict.
 - `docs/blueprint.md`: the 14-day project plan (local only, gitignored, so it may be absent in a
   fresh clone). `docs/field_map.md`: how each schema field maps to the Battery Pass data model.
 - `evals/devset.json`: the 10 dev datasheets. Gold labels (Day 3) are in `evals/labels/<name>.json`

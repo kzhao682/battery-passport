@@ -13,6 +13,7 @@ Per field the outcome is one of:
   hallucinated  gold is null, model returned a value
   both_null     gold null, model null (counted as correct)
 Descriptive text fields (LOOSE_TEXT_PATHS) match on meaning, not exact wording: see loosely_equal.
+battery_type is looser still: only the form factor and cell vs module/pack count (same_battery_type).
 List fields are matched entry by entry on value + unit; unmatched gold entries are missed,
 unmatched model entries are hallucinated. Units are compared as stated; no conversion (Day 6).
 """
@@ -43,6 +44,10 @@ SYNONYMS = {
     "lithium ion": "li-ion",
 }
 
+# general.battery_type only needs the same form factor (and no module/pack vs cell conflict).
+FORM_FACTORS = {"prismatic", "cylindrical", "pouch"}
+ASSEMBLIES = {"module", "pack"}
+
 OUTPUTS_DIR = Path("outputs")
 RESULTS_DIR = Path("evals/results")
 REL_TOL = 1e-6
@@ -72,6 +77,16 @@ def loosely_equal(a, b) -> bool:
     return bool(ta and tb) and (ta <= tb or tb <= ta)
 
 
+def same_battery_type(gold, out) -> bool:
+    """Gold "Cell, cylindrical" matches "Cylindrical rechargeable lithium ion battery": the form
+    factor must agree, and one side must not say module/pack when the other doesn't. If the gold
+    label names no form factor, fall back to the general wording rule."""
+    tg, to = _tokens(gold), _tokens(out)
+    if not tg & FORM_FACTORS:
+        return loosely_equal(gold, out)
+    return tg & FORM_FACTORS == to & FORM_FACTORS and tg & ASSEMBLIES == to & ASSEMBLIES
+
+
 def values_equal(a, b, loose: bool = False) -> bool:
     """Numbers within tolerance; dicts (Range/Dimensions) key by key; text case/space-insensitive."""
     if isinstance(a, dict) and isinstance(b, dict):
@@ -89,7 +104,11 @@ def values_equal(a, b, loose: bool = False) -> bool:
 
 
 def entries_match(gold: dict, out: dict, path: str | None = None) -> bool:
-    if not values_equal(gold.get("value"), out.get("value"), loose=path in LOOSE_TEXT_PATHS):
+    a, b = gold.get("value"), out.get("value")
+    if path == "general.battery_type" and isinstance(a, str) and isinstance(b, str):
+        if not same_battery_type(a, b):
+            return False
+    elif not values_equal(a, b, loose=path in LOOSE_TEXT_PATHS):
         return False
     # Unit only matters when the gold label states one.
     return not gold.get("unit") or _unit(gold["unit"]) == _unit(out.get("unit"))

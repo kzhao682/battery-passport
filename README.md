@@ -69,8 +69,8 @@ Scored against 100 values labelled by hand on 5 datasheets (EN and ZH+EN; LFP, N
 | | v1 | v2 |
 |---|---|---|
 | Method | one call per file, field names only, free-form JSON | field descriptions and value rules, schema-enforced output, page and quote per value |
-| Recall (labelled values found correctly) | 62% | 96% |
-| Precision (returned values that are correct) | 54% | 95% |
+| Recall (labelled values found correctly) | 64% | 97% |
+| Precision (returned values that are correct) | 56% | 96% |
 | Values returned for fields labelled empty, or extra list entries | 18 | 1 |
 | Page number matches the label | none given | 85% |
 | Quotes found on the stated page | none given | 99 of 101 |
@@ -80,13 +80,14 @@ How to read this:
 - The set is small, and some labels were written or tidied after seeing model output, so treat the v2
   figures as optimistic.
 - Descriptive text fields (such as chemistry or manufacturer) count as correct when one wording
-  contains the other. Numbers must match, with the same unit.
+  contains the other. Battery type only needs the same form factor (and cell vs module or pack).
+  Numbers must match, with the same unit.
 
 What goes wrong:
 
 - **v1:** ranges and dimensions returned as text, and whole condition tables returned as extra list
   entries.
-- **v2:** abbreviated or differently worded names (manufacturer, battery type); a label that infers
+- **v2:** an abbreviated manufacturer name; a label that infers
   chemistry from the model code, which the extractor is told not to do; and the end-of-life threshold
   (a different unit wording on one file, a value where the label is empty on another).
 

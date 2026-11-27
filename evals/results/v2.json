@@ -1,15 +1,15 @@
 {
   "overall": {
-    "correct": 96,
-    "wrong": 4,
+    "correct": 97,
+    "wrong": 3,
     "missed": 0,
     "hallucinated": 1,
     "both_null": 35,
     "page_ok": 82,
-    "page_total": 96,
-    "recall": 0.96,
-    "precision": 0.9504950495049505,
-    "page_accuracy": 0.8541666666666666
+    "page_total": 97,
+    "recall": 0.97,
+    "precision": 0.9603960396039604,
+    "page_accuracy": 0.845360824742268
   },
   "by_field": {
     "general.manufacturer": {
@@ -31,13 +31,13 @@
       "page_total": 5
     },
     "general.battery_type": {
-      "correct": 4,
-      "wrong": 1,
+      "correct": 5,
+      "wrong": 0,
       "missed": 0,
       "hallucinated": 0,
       "both_null": 0,
       "page_ok": 2,
-      "page_total": 4
+      "page_total": 5
     },
     "general.weight": {
       "correct": 4,
@@ -964,16 +964,16 @@
     },
     "LG_INR18650MH1": {
       "summary": {
-        "correct": 20,
-        "wrong": 2,
+        "correct": 21,
+        "wrong": 1,
         "missed": 0,
         "hallucinated": 0,
         "both_null": 6,
         "page_ok": 17,
-        "page_total": 20,
-        "recall": 0.9090909090909091,
-        "precision": 0.9090909090909091,
-        "page_accuracy": 0.85
+        "page_total": 21,
+        "recall": 0.9545454545454546,
+        "precision": 0.9545454545454546,
+        "page_accuracy": 0.8095238095238095
       },
       "fields": {
         "general.manufacturer": {
@@ -995,13 +995,13 @@
           "page_total": 1
         },
         "general.battery_type": {
-          "correct": 0,
-          "wrong": 1,
+          "correct": 1,
+          "wrong": 0,
           "missed": 0,
           "hallucinated": 0,
           "both_null": 0,
           "page_ok": 0,
-          "page_total": 0
+          "page_total": 1
         },
         "general.weight": {
           "correct": 1,
