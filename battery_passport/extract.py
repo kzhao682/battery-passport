@@ -85,14 +85,14 @@ class ExtractionError(Exception):
     """The model response could not be turned into a result (e.g. truncated)."""
 
 
-def extract(pdf_path: Path) -> tuple[dict, dict]:
-    """Send one PDF to Claude. Returns (result, {"input_tokens": n, "output_tokens": n})."""
+def ask_claude(pdf_path: Path, prompt: str, max_tokens: int = 8192) -> tuple[str, dict]:
+    """Send one PDF plus a prompt to Claude. Returns (response text, usage). The only API call site."""
     pdf_data = base64.standard_b64encode(pdf_path.read_bytes()).decode("utf-8")
 
     client = anthropic.Anthropic()
     response = client.messages.create(
         model=MODEL,
-        max_tokens=8192,
+        max_tokens=max_tokens,
         messages=[
             {
                 "role": "user",
@@ -105,7 +105,7 @@ def extract(pdf_path: Path) -> tuple[dict, dict]:
                             "data": pdf_data,
                         },
                     },
-                    {"type": "text", "text": PROMPT},
+                    {"type": "text", "text": prompt},
                 ],
             }
         ],
@@ -116,20 +116,31 @@ def extract(pdf_path: Path) -> tuple[dict, dict]:
 
     # The response may begin with a thinking block; take the text block.
     text = next(b.text for b in response.content if b.type == "text").strip()
-    # Claude sometimes wraps JSON in ``` fences; strip them if present.
-    if text.startswith("```"):
-        text = text.split("\n", 1)[1].rsplit("```", 1)[0]
-
     usage = {
         "input_tokens": response.usage.input_tokens,
         "output_tokens": response.usage.output_tokens,
     }
+    return text, usage
+
+
+def parse_json_object(text: str) -> dict:
+    """Parse the model's reply as a JSON object, tolerating ``` fences."""
+    # Claude sometimes wraps JSON in ``` fences; strip them if present.
+    if text.startswith("```"):
+        text = text.split("\n", 1)[1].rsplit("```", 1)[0]
     try:
         result = json.loads(text)
     except json.JSONDecodeError as e:
         raise ExtractionError(f"response was not valid JSON: {e}") from e
     if not isinstance(result, dict):
         raise ExtractionError(f"expected a JSON object, got {type(result).__name__}")
+    return result
+
+
+def extract(pdf_path: Path) -> tuple[dict, dict]:
+    """Send one PDF to Claude. Returns (result, {"input_tokens": n, "output_tokens": n})."""
+    text, usage = ask_claude(pdf_path, PROMPT)
+    result = parse_json_object(text)
     for _, ev in iter_raw_evidence(result):
         ev["document_id"] = pdf_path.name  # filled here, not by the model
     return result, usage

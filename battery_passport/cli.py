@@ -6,6 +6,7 @@ Usage (run from the repo root; paths like documents/, outputs/ and evals/ are re
     python -m battery_passport documents/X.pdf --verify-only  # re-check saved JSON, no API call
     python -m battery_passport --all [--verify] [--limit N]   # every PDF in documents/
     python -m battery_passport --devset [--verify] [--limit N]  # only the files in evals/devset.json
+    python -m battery_passport --gold --v1 [--limit N]        # v1 baseline on the labelled files -> outputs/v1/
 """
 
 import argparse
@@ -14,12 +15,15 @@ import sys
 from pathlib import Path
 
 from .extract import ExtractionError, extract
+from .extract_v1 import V1_OUT_DIR, extract_v1
+from .labels import label_files
 from .validate import validate, verify_quotes
 
 DEVSET_PATH = Path("evals/devset.json")
 
 
-def process_pdf(pdf_path: Path, out_dir: Path, *, verify: bool, verify_only: bool, force: bool) -> dict:
+def process_pdf(pdf_path: Path, out_dir: Path, *, verify: bool, verify_only: bool, force: bool,
+                extractor=None) -> dict:
     """Extract (or reuse saved output for) one PDF and return a summary record. Never raises.
 
     status: "extracted" (API call made), "reused" (saved output kept), "missing" (--verify-only
@@ -36,9 +40,9 @@ def process_pdf(pdf_path: Path, out_dir: Path, *, verify: bool, verify_only: boo
             result = json.loads(out_path.read_text())
             rec["status"] = "reused"
         else:
-            result, usage = extract(pdf_path)
+            result, usage = (extractor or extract)(pdf_path)
             rec.update(usage)
-            out_dir.mkdir(exist_ok=True)
+            out_dir.mkdir(parents=True, exist_ok=True)
             out_path.write_text(json.dumps(result, indent=2, ensure_ascii=False))
         rec["warnings"] = validate(result)
         if verify or verify_only:
@@ -52,17 +56,19 @@ def process_pdf(pdf_path: Path, out_dir: Path, *, verify: bool, verify_only: boo
 def run_batch(args: argparse.Namespace) -> int:
     """Process every PDF in args.dir (or just the devset). Returns the exit code (1 if anything failed)."""
     pdfs = sorted(args.dir.glob("*.pdf"))
-    if args.devset:
+    gold, v1 = getattr(args, "gold", False), getattr(args, "v1", False)
+    if args.devset or gold:
         if not DEVSET_PATH.exists():
             sys.exit(f"{DEVSET_PATH} not found")
-        wanted = [entry["file"] for entry in json.loads(DEVSET_PATH.read_text())["files"]]
+        wanted = label_files() if gold else [e["file"] for e in json.loads(DEVSET_PATH.read_text())["files"]]
         missing = sorted(set(wanted) - {p.name for p in pdfs})
         if missing:
             sys.exit(f"Devset files not found in {args.dir}: {', '.join(missing)}")
         pdfs = [p for p in pdfs if p.name in set(wanted)]
     if not pdfs:
         sys.exit(f"No PDFs found in {args.dir}")
-    out_dir = Path("outputs")
+    out_dir = V1_OUT_DIR if v1 else Path("outputs")
+    extractor = extract_v1 if v1 else None
     records, api_calls = [], 0
     print(f"Batch: {len(pdfs)} PDFs in {args.dir}", file=sys.stderr)
 
@@ -73,7 +79,7 @@ def run_batch(args: argparse.Namespace) -> int:
             if will_call_api and args.limit is not None and api_calls >= args.limit:
                 continue  # --limit reached: leave the rest for a later run
             rec = process_pdf(pdf, out_dir, verify=args.verify, verify_only=args.verify_only,
-                              force=args.force)
+                              force=args.force, extractor=extractor)
             api_calls += rec["status"] in ("extracted", "failed") and will_call_api
             records.append(rec)
             flags = (f"{len(rec['warnings'])} warn, {len(rec['verify_failures'])} verify-fail"
@@ -105,7 +111,7 @@ def run_batch(args: argparse.Namespace) -> int:
         if r["status"] == "failed":
             print(f"FAILED {r['file']}: {r['error']}")
 
-    out_dir.mkdir(exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "_batch_summary.json").write_text(json.dumps(records, indent=2, ensure_ascii=False))
     print(f"Details in {out_dir / '_batch_summary.json'}", file=sys.stderr)
     return 1 if count("failed") or n_vfail else 0
@@ -122,6 +128,10 @@ def main() -> None:
                         help="batch mode: process every PDF in --dir, skipping ones that already have output")
     parser.add_argument("--devset", action="store_true",
                         help="batch mode on only the files listed in evals/devset.json")
+    parser.add_argument("--gold", action="store_true",
+                        help="batch mode on only the hand-labelled files (label_day3 in evals/devset.json)")
+    parser.add_argument("--v1", action="store_true",
+                        help="batch mode: use the plain v1 baseline prompt; saves to outputs/v1/")
     parser.add_argument("--dir", type=Path, default=Path("documents"),
                         help="folder of PDFs for --all/--devset (default: documents)")
     parser.add_argument("--limit", type=int, metavar="N",
@@ -130,11 +140,11 @@ def main() -> None:
                         help="in batch mode: re-extract even if outputs/<name>.json exists")
     args = parser.parse_args()
 
-    batch = args.all or args.devset
+    batch = args.all or args.devset or args.gold
     if batch == (args.pdf is not None):
-        parser.error("give either a PDF path or --all/--devset (not both, not neither)")
-    if not batch and (args.limit is not None or args.force):
-        parser.error("--limit and --force only apply with --all or --devset")
+        parser.error("give either a PDF path or --all/--devset/--gold (not both, not neither)")
+    if not batch and (args.limit is not None or args.force or args.v1):
+        parser.error("--limit, --force and --v1 only apply with --all, --devset or --gold")
     if batch:
         sys.exit(run_batch(args))
 
