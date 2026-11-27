@@ -1,0 +1,1448 @@
+{
+  "overall": {
+    "correct": 96,
+    "wrong": 4,
+    "missed": 0,
+    "hallucinated": 1,
+    "both_null": 35,
+    "page_ok": 82,
+    "page_total": 96,
+    "recall": 0.96,
+    "precision": 0.9504950495049505,
+    "page_accuracy": 0.8541666666666666
+  },
+  "by_field": {
+    "general.manufacturer": {
+      "correct": 4,
+      "wrong": 1,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 3,
+      "page_total": 4
+    },
+    "general.model": {
+      "correct": 5,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 3,
+      "page_total": 5
+    },
+    "general.battery_type": {
+      "correct": 4,
+      "wrong": 1,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 2,
+      "page_total": 4
+    },
+    "general.weight": {
+      "correct": 4,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 1,
+      "page_ok": 4,
+      "page_total": 4
+    },
+    "general.dimensions": {
+      "correct": 5,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 4,
+      "page_total": 5
+    },
+    "materials.chemistry": {
+      "correct": 4,
+      "wrong": 1,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 3,
+      "page_total": 4
+    },
+    "materials.cathode_material": {
+      "correct": 0,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 5,
+      "page_ok": 0,
+      "page_total": 0
+    },
+    "materials.anode_material": {
+      "correct": 0,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 5,
+      "page_ok": 0,
+      "page_total": 0
+    },
+    "materials.electrolyte": {
+      "correct": 0,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 5,
+      "page_ok": 0,
+      "page_total": 0
+    },
+    "performance.rated_capacity": {
+      "correct": 7,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 7,
+      "page_total": 7
+    },
+    "performance.nominal_voltage": {
+      "correct": 5,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 5,
+      "page_total": 5
+    },
+    "performance.min_voltage": {
+      "correct": 5,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 4,
+      "page_total": 5
+    },
+    "performance.max_voltage": {
+      "correct": 5,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 3,
+      "page_total": 5
+    },
+    "performance.rated_energy": {
+      "correct": 1,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 4,
+      "page_ok": 1,
+      "page_total": 1
+    },
+    "performance.max_charge_current": {
+      "correct": 6,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 6,
+      "page_total": 6
+    },
+    "performance.max_discharge_current": {
+      "correct": 8,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 8,
+      "page_total": 8
+    },
+    "performance.internal_resistance": {
+      "correct": 4,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 1,
+      "page_ok": 4,
+      "page_total": 4
+    },
+    "performance.self_discharge_rate": {
+      "correct": 4,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 1,
+      "page_ok": 4,
+      "page_total": 4
+    },
+    "performance.round_trip_efficiency": {
+      "correct": 0,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 5,
+      "page_ok": 0,
+      "page_total": 0
+    },
+    "durability.cycle_life": {
+      "correct": 5,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 1,
+      "page_ok": 5,
+      "page_total": 5
+    },
+    "durability.end_of_life_threshold": {
+      "correct": 2,
+      "wrong": 1,
+      "missed": 0,
+      "hallucinated": 1,
+      "both_null": 1,
+      "page_ok": 2,
+      "page_total": 2
+    },
+    "durability.calendar_life": {
+      "correct": 0,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 5,
+      "page_ok": 0,
+      "page_total": 0
+    },
+    "operating_conditions.charge_temperature": {
+      "correct": 5,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 4,
+      "page_total": 5
+    },
+    "operating_conditions.discharge_temperature": {
+      "correct": 5,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 0,
+      "page_ok": 4,
+      "page_total": 5
+    },
+    "operating_conditions.storage_temperature": {
+      "correct": 8,
+      "wrong": 0,
+      "missed": 0,
+      "hallucinated": 0,
+      "both_null": 1,
+      "page_ok": 6,
+      "page_total": 8
+    }
+  },
+  "files": {
+    "CATL_CB310_280Ah": {
+      "summary": {
+        "correct": 21,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0,
+        "both_null": 5,
+        "page_ok": 16,
+        "page_total": 21,
+        "recall": 1.0,
+        "precision": 1.0,
+        "page_accuracy": 0.7619047619047619
+      },
+      "fields": {
+        "general.manufacturer": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.model": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.battery_type": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "general.weight": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.dimensions": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "materials.chemistry": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "materials.cathode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.anode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.electrolyte": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.rated_capacity": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.nominal_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.min_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "performance.max_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "performance.rated_energy": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.max_charge_current": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.max_discharge_current": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 2,
+          "page_total": 2
+        },
+        "performance.internal_resistance": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.self_discharge_rate": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.round_trip_efficiency": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "durability.cycle_life": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "durability.end_of_life_threshold": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "durability.calendar_life": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "operating_conditions.charge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "operating_conditions.discharge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "operating_conditions.storage_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        }
+      }
+    },
+    "HKD_Na18650-1300": {
+      "summary": {
+        "correct": 20,
+        "wrong": 1,
+        "missed": 0,
+        "hallucinated": 1,
+        "both_null": 7,
+        "page_ok": 16,
+        "page_total": 20,
+        "recall": 0.9523809523809523,
+        "precision": 0.9090909090909091,
+        "page_accuracy": 0.8
+      },
+      "fields": {
+        "general.manufacturer": {
+          "correct": 0,
+          "wrong": 1,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "general.model": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.battery_type": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.weight": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "general.dimensions": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "materials.chemistry": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "materials.cathode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.anode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.electrolyte": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.rated_capacity": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 2,
+          "page_total": 2
+        },
+        "performance.nominal_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.min_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.max_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "performance.rated_energy": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.max_charge_current": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 2,
+          "page_total": 2
+        },
+        "performance.max_discharge_current": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 2,
+          "page_total": 2
+        },
+        "performance.internal_resistance": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.self_discharge_rate": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.round_trip_efficiency": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "durability.cycle_life": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "durability.end_of_life_threshold": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 1,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "durability.calendar_life": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "operating_conditions.charge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "operating_conditions.discharge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "operating_conditions.storage_temperature": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 2
+        }
+      }
+    },
+    "LF280K": {
+      "summary": {
+        "correct": 20,
+        "wrong": 1,
+        "missed": 0,
+        "hallucinated": 0,
+        "both_null": 6,
+        "page_ok": 19,
+        "page_total": 20,
+        "recall": 0.9523809523809523,
+        "precision": 0.9523809523809523,
+        "page_accuracy": 0.95
+      },
+      "fields": {
+        "general.manufacturer": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.model": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "general.battery_type": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.weight": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.dimensions": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "materials.chemistry": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "materials.cathode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.anode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.electrolyte": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.rated_capacity": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.nominal_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.min_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.max_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.rated_energy": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.max_charge_current": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.max_discharge_current": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.internal_resistance": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.self_discharge_rate": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.round_trip_efficiency": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "durability.cycle_life": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 2,
+          "page_total": 2
+        },
+        "durability.end_of_life_threshold": {
+          "correct": 0,
+          "wrong": 1,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "durability.calendar_life": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "operating_conditions.charge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "operating_conditions.discharge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "operating_conditions.storage_temperature": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 2,
+          "page_total": 2
+        }
+      }
+    },
+    "LG_INR18650MH1": {
+      "summary": {
+        "correct": 20,
+        "wrong": 2,
+        "missed": 0,
+        "hallucinated": 0,
+        "both_null": 6,
+        "page_ok": 17,
+        "page_total": 20,
+        "recall": 0.9090909090909091,
+        "precision": 0.9090909090909091,
+        "page_accuracy": 0.85
+      },
+      "fields": {
+        "general.manufacturer": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "general.model": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "general.battery_type": {
+          "correct": 0,
+          "wrong": 1,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "general.weight": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.dimensions": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "materials.chemistry": {
+          "correct": 0,
+          "wrong": 1,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.cathode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.anode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.electrolyte": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.rated_capacity": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 2,
+          "page_total": 2
+        },
+        "performance.nominal_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.min_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.max_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.rated_energy": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.max_charge_current": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.max_discharge_current": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.internal_resistance": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.self_discharge_rate": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.round_trip_efficiency": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "durability.cycle_life": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "durability.end_of_life_threshold": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "durability.calendar_life": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "operating_conditions.charge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "operating_conditions.discharge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "operating_conditions.storage_temperature": {
+          "correct": 3,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 3,
+          "page_total": 3
+        }
+      }
+    },
+    "WINSTON_LFP300AHA": {
+      "summary": {
+        "correct": 15,
+        "wrong": 0,
+        "missed": 0,
+        "hallucinated": 0,
+        "both_null": 11,
+        "page_ok": 14,
+        "page_total": 15,
+        "recall": 1.0,
+        "precision": 1.0,
+        "page_accuracy": 0.9333333333333333
+      },
+      "fields": {
+        "general.manufacturer": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.model": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.battery_type": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 0,
+          "page_total": 1
+        },
+        "general.weight": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "general.dimensions": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "materials.chemistry": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "materials.cathode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.anode_material": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "materials.electrolyte": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.rated_capacity": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.nominal_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.min_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.max_voltage": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.rated_energy": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.max_charge_current": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "performance.max_discharge_current": {
+          "correct": 2,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 2,
+          "page_total": 2
+        },
+        "performance.internal_resistance": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.self_discharge_rate": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "performance.round_trip_efficiency": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "durability.cycle_life": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "durability.end_of_life_threshold": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "durability.calendar_life": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        },
+        "operating_conditions.charge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "operating_conditions.discharge_temperature": {
+          "correct": 1,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 0,
+          "page_ok": 1,
+          "page_total": 1
+        },
+        "operating_conditions.storage_temperature": {
+          "correct": 0,
+          "wrong": 0,
+          "missed": 0,
+          "hallucinated": 0,
+          "both_null": 1,
+          "page_ok": 0,
+          "page_total": 0
+        }
+      }
+    }
+  }
+}

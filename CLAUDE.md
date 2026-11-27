@@ -7,7 +7,8 @@ battery passport: each field has a value, unit, page number and a verbatim quote
 
 - Never run an extraction or call the Anthropic API without asking Kevin first; reuse the saved
   files in `outputs/` instead. That covers `python -m battery_passport` without `--verify-only`,
-  `--all`/`--devset` runs that need new files, `--force`, and `make devset` / `make batch`.
+  `--all`/`--devset`/`--gold` runs that need new files, `--force`, and `make devset` / `make batch` /
+  `make v1` / `make v2`.
   `--verify-only`, `make devset-verify` and `make test` are free and fine to run.
 
 ## Run
@@ -70,9 +71,17 @@ the package, one job per module; don't add `.py` files at the repo root.
   plausibility rules (Day 6+) belong here or in a sibling module.
 - `battery_passport/cli.py`: argument parsing, `process_pdf()`, `run_batch()` and the summary.
   `__main__.py` makes `python -m battery_passport` work.
+- `battery_passport/extract_v1.py`: Day 4 plain-prompt baseline (`--gold --v1` -> `outputs/v1/`).
+- `battery_passport/extract_v2.py`: Day 5 structured outputs (`--gold --v2` -> `outputs/v2/`), one
+  call per field group. The API rejects the whole schema at once, and rejects a group whose keys
+  are optional, so `api_group_model()` derives an all-required, nullable schema from `schema.py`.
+  No prompt caching: it was written on every call and never read. `outputs/*.json` (top level) is
+  still the older single-call extractor in `extract.py`.
 - `battery_passport/labels.py`: writes blank gold-label templates (`make labels`, never overwrites).
   `battery_passport/evaluate.py`: scores `outputs/` against `evals/labels/` (`make eval`, free);
-  results go to `evals/results/`.
+  results go to `evals/results/` (tracked; `make eval`, `eval-v1`, `eval-v2`). Descriptive text
+  fields match loosely (`LOOSE_TEXT_PATHS`); `general.model`, numbers and units do not, except
+  that the ohm symbol equals "Ohm".
 - `docs/blueprint.md`: the 14-day project plan (local only, gitignored, so it may be absent in a
   fresh clone). `docs/field_map.md`: how each schema field maps to the Battery Pass data model.
 - `evals/devset.json`: the 10 dev datasheets. Gold labels (Day 3) are in `evals/labels/<name>.json`

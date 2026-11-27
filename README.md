@@ -62,6 +62,44 @@ The fields are defined in [battery_passport/schema.py](battery_passport/schema.p
 [docs/field_map.md](docs/field_map.md) maps each one to the Battery Pass data model; the passport
 fields datasheets rarely contain (carbon footprint, recycled content, due diligence) are out of scope here.
 
+## Accuracy
+
+Scored against 100 values labelled by hand on 5 datasheets (EN and ZH+EN; LFP, NMC and sodium-ion).
+
+| | v1 | v2 |
+|---|---|---|
+| Method | one call per file, field names only, free-form JSON | field descriptions and value rules, schema-enforced output, page and quote per value |
+| Recall (labelled values found correctly) | 62% | 96% |
+| Precision (returned values that are correct) | 54% | 95% |
+| Values returned for fields labelled empty, or extra list entries | 18 | 1 |
+| Page number matches the label | none given | 85% |
+| Quotes found on the stated page | none given | 99 of 101 |
+
+How to read this:
+
+- The set is small, and some labels were written or tidied after seeing model output, so treat the v2
+  figures as optimistic.
+- Descriptive text fields (such as chemistry or manufacturer) count as correct when one wording
+  contains the other. Numbers must match, with the same unit.
+
+What goes wrong:
+
+- **v1:** ranges and dimensions returned as text, and whole condition tables returned as extra list
+  entries.
+- **v2:** abbreviated or differently worded names (manufacturer, battery type); a label that infers
+  chemistry from the model code, which the extractor is told not to do; and the end-of-life threshold
+  (a different unit wording on one file, a value where the label is empty on another).
+
+v2 makes one call per field group, because the API rejects the full schema in a single structured
+request. Each call re-sends the PDF, so it used about 5 times the input tokens of v1. Prompt caching
+was tried and dropped: the cache was written on every call and never read.
+
+```
+python -m battery_passport --gold --v1            # calls the API -> outputs/v1/
+python -m battery_passport --gold --v2 --verify   # calls the API -> outputs/v2/
+make eval-v1 eval-v2                              # free: score saved outputs -> evals/results/
+```
+
 ## Tests
 
 ```
