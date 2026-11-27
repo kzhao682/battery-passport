@@ -17,7 +17,7 @@
       "note": "Type is stated as High Rate."
     },
     "battery_type": {
-      "value": "Cell, cylindrical (18650)",
+      "value": "Cell, cylindrical",
       "unit": null,
       "page": 4,
       "in_document": true,

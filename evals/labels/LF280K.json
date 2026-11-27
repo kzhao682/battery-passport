@@ -17,7 +17,7 @@
       "note": null
     },
     "battery_type": {
-      "value": "Cell, aluminum shell (prismatic, inferred from drawing)",
+      "value": "Cell, prismatic",
       "unit": null,
       "page": 5,
       "in_document": true,
