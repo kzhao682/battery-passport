@@ -7,6 +7,7 @@ Usage (run from the repo root; paths like documents/, outputs/ and evals/ are re
     python -m battery_passport --all [--verify] [--limit N]   # every PDF in documents/
     python -m battery_passport --devset [--verify] [--limit N]  # only the files in evals/devset.json
     python -m battery_passport --gold --v1 [--limit N]        # v1 baseline on the labelled files -> outputs/v1/
+    python -m battery_passport --gold --v2 [--verify] [--limit N]  # v2 (structured outputs) -> outputs/v2/
 """
 
 import argparse
@@ -16,6 +17,7 @@ from pathlib import Path
 
 from .extract import ExtractionError, extract
 from .extract_v1 import V1_OUT_DIR, extract_v1
+from .extract_v2 import V2_OUT_DIR, extract_v2
 from .labels import label_files
 from .validate import validate, verify_quotes
 
@@ -56,7 +58,8 @@ def process_pdf(pdf_path: Path, out_dir: Path, *, verify: bool, verify_only: boo
 def run_batch(args: argparse.Namespace) -> int:
     """Process every PDF in args.dir (or just the devset). Returns the exit code (1 if anything failed)."""
     pdfs = sorted(args.dir.glob("*.pdf"))
-    gold, v1 = getattr(args, "gold", False), getattr(args, "v1", False)
+    gold = getattr(args, "gold", False)
+    v1, v2 = getattr(args, "v1", False), getattr(args, "v2", False)
     if args.devset or gold:
         if not DEVSET_PATH.exists():
             sys.exit(f"{DEVSET_PATH} not found")
@@ -67,8 +70,8 @@ def run_batch(args: argparse.Namespace) -> int:
         pdfs = [p for p in pdfs if p.name in set(wanted)]
     if not pdfs:
         sys.exit(f"No PDFs found in {args.dir}")
-    out_dir = V1_OUT_DIR if v1 else Path("outputs")
-    extractor = extract_v1 if v1 else None
+    out_dir = V1_OUT_DIR if v1 else V2_OUT_DIR if v2 else Path("outputs")
+    extractor = extract_v1 if v1 else extract_v2 if v2 else None
     records, api_calls = [], 0
     print(f"Batch: {len(pdfs)} PDFs in {args.dir}", file=sys.stderr)
 
@@ -132,6 +135,8 @@ def main() -> None:
                         help="batch mode on only the hand-labelled files (label_day3 in evals/devset.json)")
     parser.add_argument("--v1", action="store_true",
                         help="batch mode: use the plain v1 baseline prompt; saves to outputs/v1/")
+    parser.add_argument("--v2", action="store_true",
+                        help="batch mode: structured-outputs extractor, one call per field group; saves to outputs/v2/")
     parser.add_argument("--dir", type=Path, default=Path("documents"),
                         help="folder of PDFs for --all/--devset (default: documents)")
     parser.add_argument("--limit", type=int, metavar="N",
@@ -143,8 +148,10 @@ def main() -> None:
     batch = args.all or args.devset or args.gold
     if batch == (args.pdf is not None):
         parser.error("give either a PDF path or --all/--devset/--gold (not both, not neither)")
-    if not batch and (args.limit is not None or args.force or args.v1):
-        parser.error("--limit, --force and --v1 only apply with --all, --devset or --gold")
+    if not batch and (args.limit is not None or args.force or args.v1 or args.v2):
+        parser.error("--limit, --force, --v1 and --v2 only apply with --all, --devset or --gold")
+    if args.v1 and args.v2:
+        parser.error("choose one of --v1 and --v2")
     if batch:
         sys.exit(run_batch(args))
 

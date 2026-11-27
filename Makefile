@@ -1,6 +1,6 @@
 PY = .venv/bin/python
 
-.PHONY: setup schema devset devset-verify verify batch test labels eval v1 eval-v1
+.PHONY: setup schema devset devset-verify verify batch test labels eval v1 eval-v1 v2 eval-v2
 
 setup:            ## create the venv and install dependencies
 	python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
@@ -34,3 +34,9 @@ v1:               ## CALLS THE API (ask Kevin first): v1 baseline on the 5 gold 
 
 eval-v1:          ## free: score outputs/v1/ against the gold labels
 	$(PY) -m battery_passport.evaluate --outputs-dir outputs/v1
+
+v2:               ## CALLS THE API (ask Kevin first): v2 on the 5 gold files -> outputs/v2/
+	$(PY) -m battery_passport --gold --v2 --verify
+
+eval-v2:          ## free: score outputs/v2/ against the gold labels
+	$(PY) -m battery_passport.evaluate --outputs-dir outputs/v2

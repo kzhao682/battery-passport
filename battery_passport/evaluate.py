@@ -55,7 +55,8 @@ def _text(s) -> str:
 
 
 def _unit(u) -> str:
-    return _text(u or "").replace("℃", "°c").replace("degc", "°c")
+    # casefold turns both "Ω" (U+03A9) and the ohm sign (U+2126) into "ω", so "mΩ" == "mOhm"
+    return _text(u or "").replace("℃", "°c").replace("degc", "°c").replace("ω", "ohm")
 
 
 def _tokens(s) -> set[str]:

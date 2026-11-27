@@ -16,10 +16,12 @@ load_dotenv()  # reads ANTHROPIC_API_KEY from .env
 MODEL = "claude-sonnet-5-5"
 
 
-def _field_listing() -> str:
+def _field_listing(groups: list[str] | None = None) -> str:
     """Render the schema's groups and fields (with descriptions) as a compact list for the prompt."""
     lines = []
     for group, group_info in DatasheetExtraction.model_fields.items():
+        if groups is not None and group not in groups:
+            continue
         lines.append(f'"{group}":')
         for name, info in group_info.annotation.model_fields.items():
             shape = (
@@ -40,13 +42,32 @@ def _evidence_listing() -> str:
     )
 
 
-PROMPT = f"""You are extracting data for an EU battery passport from a battery datasheet.
+REPLY_ALL = f"""Reply with JSON only, no other text, in this shape (all groups present):
+{{
+  "general": {{"manufacturer": {{"value": "...", "unit": null, "page": 1, "quote": "...", "confidence": "high"}}, "model": null, ...}},
+  "materials": {{...}},
+  "performance": {{"rated_capacity": [{{"value": 280, "unit": "Ah", "conditions": "0.5C", "page": 6, "quote": "..."}}], ...}},
+  "durability": {{...}},
+  "operating_conditions": {{...}}
+}}"""
+
+
+def build_prompt(groups: list[str] | None = None) -> str:
+    """The extraction prompt for all groups (default), or for just the named groups (v2 calls one group at a time)."""
+    if groups is None:
+        reply = REPLY_ALL
+    else:
+        reply = (
+            f"Reply with JSON only, no other text: the object for the group {', '.join(groups)} "
+            "(its fields as keys, no wrapper)."
+        )
+    return f"""You are extracting data for an EU battery passport from a battery datasheet.
 
 The output has these groups and fields. A field marked "one evidence object" is an object, or
 null if the document does not state it. A field marked "list of evidence objects" is a list with
 one object per set of conditions, or [] if the document does not state it.
 
-{_field_listing()}
+{_field_listing(groups)}
 
 Each evidence object has these keys:
 {_evidence_listing()}
@@ -71,14 +92,10 @@ Page numbers: "page" is the position of the page in the PDF file, counting the f
 the file as 1. Ignore any page numbers printed on the pages themselves (cover pages, roman
 numerals and "Page X of Y" footers often do not match the file position).
 
-Reply with JSON only, no other text, in this shape (all groups present):
-{{
-  "general": {{"manufacturer": {{"value": "...", "unit": null, "page": 1, "quote": "...", "confidence": "high"}}, "model": null, ...}},
-  "materials": {{...}},
-  "performance": {{"rated_capacity": [{{"value": 280, "unit": "Ah", "conditions": "0.5C", "page": 6, "quote": "..."}}], ...}},
-  "durability": {{...}},
-  "operating_conditions": {{...}}
-}}"""
+{reply}"""
+
+
+PROMPT = build_prompt()
 
 
 class ExtractionError(Exception):

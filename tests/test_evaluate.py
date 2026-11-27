@@ -59,3 +59,9 @@ def test_loose_matching_still_rejects_different_things():
 def test_model_number_stays_strict_and_unpathed_calls_stay_strict():
     assert score_field(e("LF280K"), e("LF280K-2"), "general.model")["wrong"] == 1
     assert score_field(e("LFP"), e("LFP (lithium iron phosphate)"))["wrong"] == 1
+
+
+def test_ohm_symbol_and_spelled_out_unit_match():
+    for symbol in ("mΩ", "mΩ"):  # Greek capital omega and the ohm sign
+        assert score_field(e(0.25, "mOhm"), e(0.25, symbol))["correct"] == 1
+    assert score_field(e(0.25, "mOhm"), e(0.25, "Ω"))["wrong"] == 1
