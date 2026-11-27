@@ -1,0 +1,223 @@
+{
+  "document_id": "LF280K.pdf",
+  "labelled": true,
+  "general": {
+    "manufacturer": {
+      "value": "EVE Energy Co., Ltd",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": null
+    },
+    "model": {
+      "value": "LF280K",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": null
+    },
+    "battery_type": {
+      "value": "Cell, aluminum shell (prismatic, inferred from drawing)",
+      "unit": null,
+      "page": 5,
+      "in_document": true,
+      "note": "Form factor 'prismatic' is not stated in text; inferred from the drawing and aluminum shell. Document calls it a cell in section 9 'Handling of Cells'."
+    },
+    "weight": {
+      "value": 5220,
+      "unit": "g",
+      "page": 6,
+      "in_document": true,
+      "note": "Tolerance ±200 g"
+    },
+    "dimensions": {
+      "value": {
+        "width": 173.6,
+        "thickness": 72.0,
+        "height": 207.5
+      },
+      "unit": "mm",
+      "page": 5,
+      "in_document": true,
+      "note": "Width 173.6±0.3, thickness 72.0±1.0 (30% SOC), total height 207.5±0.5 including terminals; body height H1 204.6±0.5 excluding terminals."
+    }
+  },
+  "materials": {
+    "chemistry": {
+      "value": "LFP",
+      "unit": null,
+      "page": 5,
+      "in_document": true,
+      "note": null
+    },
+    "cathode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "anode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "electrolyte": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "performance": {
+    "rated_capacity": [
+      {
+        "value": 280.0,
+        "unit": "Ah",
+        "conditions": "0.5C discharge, 2.5V cut-off, (25±2)℃ (typical capacity)",
+        "page": 6
+      }
+    ],
+    "nominal_voltage": {
+      "value": 3.2,
+      "unit": "V",
+      "page": 6,
+      "in_document": true,
+      "note": null
+    },
+    "min_voltage": {
+      "value": 2.5,
+      "unit": "V",
+      "page": 6,
+      "in_document": true,
+      "note": "Section 6.1 uses 2.0V cut-off for -20℃ discharge test"
+    },
+    "max_voltage": {
+      "value": 3.65,
+      "unit": "V",
+      "page": 6,
+      "in_document": true,
+      "note": null
+    },
+    "rated_energy": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "max_charge_current": [
+      {
+        "value": 1,
+        "unit": "C",
+        "conditions": "CC-CV, under 0ºC-45ºC",
+        "page": 6
+      }
+    ],
+    "max_discharge_current": [
+      {
+        "value": 1,
+        "unit": "C",
+        "conditions": "Continuous, cut-off 2.5V; stated as preference value",
+        "page": 6
+      }
+    ],
+    "internal_resistance": [
+      {
+        "value": 0.25,
+        "unit": "mOhm",
+        "conditions": "AC 1 kHz, 30% SOC; maximum value (≤)",
+        "page": 10
+      }
+    ],
+    "self_discharge_rate": {
+      "value": 95,
+      "unit": "%",
+      "page": 9,
+      "in_document": true,
+      "note": "Minimum retention requirement; capacity recovery ≥97%"
+    },
+    "round_trip_efficiency": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "durability": {
+    "cycle_life": [
+      {
+        "value": 6000,
+        "unit": "cycles",
+        "conditions": "(25±2)ºC, 0.5C discharge to 2.5V, 300kgf force (without fixture), end at 80% of initial capacity",
+        "page": 9
+      },
+      {
+        "value": 2500,
+        "unit": "cycles",
+        "conditions": "(45±2)ºC, 0.5C discharge to 2.5V, 300kgf force (without fixture), end at 80% of initial capacity",
+        "page": 9
+      }
+    ],
+    "end_of_life_threshold": {
+      "value": 80,
+      "unit": "% of initial capacity",
+      "page": 10,
+      "in_document": true,
+      "note": null
+    },
+    "calendar_life": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "operating_conditions": {
+    "charge_temperature": {
+      "value": {
+        "min": 0,
+        "max": 55
+      },
+      "unit": "degC",
+      "page": 6,
+      "in_document": true,
+      "note": "Section 9.1.3 also gives 0ºC~55ºC"
+    },
+    "discharge_temperature": {
+      "value": {
+        "min": -20,
+        "max": 55
+      },
+      "unit": "degC",
+      "page": 6,
+      "in_document": true,
+      "note": null
+    },
+    "storage_temperature": [
+      {
+        "value": {
+          "min": -20,
+          "max": 45
+        },
+        "unit": "degC",
+        "conditions": "Storage up to one month",
+        "page": 6
+      },
+      {
+        "value": {
+          "min": 0,
+          "max": 35
+        },
+        "unit": "degC",
+        "conditions": "Storage up to one year",
+        "page": 6
+      }
+    ]
+  }
+}

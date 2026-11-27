@@ -1,0 +1,214 @@
+{
+  "document_id": "CATL_CB310_280Ah.pdf",
+  "labelled": true,
+  "general": {
+    "manufacturer": {
+      "value": "Contemporary Amperex Technology Co., Limited (CATL)",
+      "unit": null,
+      "page": 4,
+      "in_document": true,
+      "note": null
+    },
+    "model": {
+      "value": "CB310",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": null
+    },
+    "battery_type": {
+      "value": "Cell, prismatic (rectangular)",
+      "unit": null,
+      "page": 6,
+      "in_document": true,
+      "note": "Cell stated in the document; prismatic form factor inferred from the dimensions, not stated in text."
+    },
+    "weight": {
+      "value": 5.34,
+      "unit": "Kg",
+      "page": 6,
+      "in_document": true,
+      "note": "Tolerance ±0.30 Kg"
+    },
+    "dimensions": {
+      "value": {
+        "width": 173.9,
+        "height": 207.2,
+        "thickness": 71.7
+      },
+      "unit": "mm",
+      "page": 6,
+      "in_document": true,
+      "note": "300±20Kgf compression force, fresh cell (BOL), Tolerance ±0.8 mm each; height includes terminal (Height with Terminal)"
+    }
+  },
+  "materials": {
+    "chemistry": {
+      "value": "LFP (lithium iron phosphate)",
+      "unit": null,
+      "page": 4,
+      "in_document": true,
+      "note": null
+    },
+    "cathode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "anode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "electrolyte": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "performance": {
+    "rated_capacity": [
+      {
+        "value": 280,
+        "unit": "Ah",
+        "conditions": null,
+        "page": 5
+      }
+    ],
+    "nominal_voltage": {
+      "value": 3.2,
+      "unit": "V",
+      "page": 4,
+      "in_document": true,
+      "note": "3.2V given in product definition, not in the specification table"
+    },
+    "min_voltage": {
+      "value": 2.5,
+      "unit": "V",
+      "page": 5,
+      "in_document": true,
+      "note": "Discharge cut-off voltage 2.5V at T>0°C, 2.0V at T≤0°C"
+    },
+    "max_voltage": {
+      "value": 3.65,
+      "unit": "V",
+      "page": 5,
+      "in_document": true,
+      "note": null
+    },
+    "rated_energy": {
+      "value": 896,
+      "unit": "Wh",
+      "page": 5,
+      "in_document": true,
+      "note": null
+    },
+    "max_charge_current": [
+      {
+        "value": 0.5,
+        "unit": "P",
+        "conditions": "Cell temperature 25-55°C, 0%~<100% SOC (0.35P at 20°C, 0.2P at 15°C, 0.1P at 10°C, 0.05P at 5°C, 0 at 0°C and 60°C)",
+        "page": 7
+      }
+    ],
+    "max_discharge_current": [
+      {
+        "value": 0.5,
+        "unit": "P",
+        "conditions": "Maximum continuous discharge power",
+        "page": 7
+      },
+      {
+        "value": 500,
+        "unit": "A",
+        "conditions": "10 s pulse under any state of charge; temperature rise ≤5°C",
+        "page": 8
+      }
+    ],
+    "internal_resistance": [
+      {
+        "value": 0.17,
+        "unit": "mΩ",
+        "conditions": "AC 1 kHz, fresh cell, 40% SOC",
+        "page": 5
+      }
+    ],
+    "self_discharge_rate": {
+      "value": 3.0,
+      "unit": "%/month",
+      "page": 6,
+      "in_document": true,
+      "note": "Cell after 3 months from shipping, standard charged to 40% SOC, stored at 25±2°C"
+    },
+    "round_trip_efficiency": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "durability": {
+    "cycle_life": [
+      {
+        "value": 6000,
+        "unit": "cycles",
+        "conditions": "25±2°C, standard charge and discharge method under 300±20Kgf preload",
+        "page": 6
+      }
+    ],
+    "end_of_life_threshold": {
+      "value": 60,
+      "unit": "% of typical capacity",
+      "page": 9,
+      "in_document": true,
+      "note": "Stop-use criterion in end of life management; not explicitly tied to the 6000-cycle figure"
+    },
+    "calendar_life": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "operating_conditions": {
+    "charge_temperature": {
+      "value": {
+        "min": 0,
+        "max": 60
+      },
+      "unit": "°C",
+      "page": 7,
+      "in_document": true,
+      "note": "Absolute charging temperature"
+    },
+    "discharge_temperature": {
+      "value": {
+        "min": -20,
+        "max": 60
+      },
+      "unit": "°C",
+      "page": 7,
+      "in_document": true,
+      "note": "Absolute discharge temperature"
+    },
+    "storage_temperature": [
+      {
+        "value": {
+          "min": -30,
+          "max": 60
+        },
+        "unit": "°C",
+        "conditions": "Storage ambient humidity ≤85% RH, no condensation; for storage over 30 days adjust SOC to about 50% every 3 months (recommended)",
+        "page": 6
+      }
+    ]
+  }
+}

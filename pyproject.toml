@@ -1,3 +1,6 @@
 # Tool configuration only (no packaging): run from the repo root with `python -m battery_passport`.
 [tool.ruff]
 line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

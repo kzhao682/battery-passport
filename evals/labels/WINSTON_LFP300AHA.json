@@ -1,0 +1,193 @@
+{
+  "document_id": "WINSTON_LFP300AHA.pdf",
+  "labelled": true,
+  "general": {
+    "manufacturer": {
+      "value": "GWL a.s.",
+      "unit": null,
+      "page": 3,
+      "in_document": true,
+      "note": "GWL appears as the datasheet publisher and distributor; the document does not say it makes the cell. The cell is marketed as Winston."
+    },
+    "model": {
+      "value": "LFP300AHA",
+      "unit": null,
+      "page": 2,
+      "in_document": true,
+      "note": "Alternative markings: TS-LFP300AHA, TS-LYP300AHA"
+    },
+    "battery_type": {
+      "value": "Cell, prismatic",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": "The document calls the product a cell. The prismatic form factor is inferred from the image and dimensions and is not stated in text."
+    },
+    "weight": {
+      "value": 9.7,
+      "unit": "kg",
+      "page": 2,
+      "in_document": true,
+      "note": "Tolerance +/- 150 g"
+    },
+    "dimensions": {
+      "value": {
+        "length": 363,
+        "width": 303.9,
+        "thickness": 55.5
+      },
+      "unit": "mm",
+      "page": 2,
+      "in_document": true,
+      "note": "Tolerance +/- 2 mm. The document does not say whether terminals are included. The drawing shows 303.9 mm overall and 297.7 mm for the second height-type dimension. The assignment of length, width and thickness follows the drawing."
+    }
+  },
+  "materials": {
+    "chemistry": {
+      "value": "LFP",
+      "unit": null,
+      "page": 2,
+      "in_document": true,
+      "note": "Chemistry is only implied by the model name. The charts refer to 'LYP type battery' and the alternative marking is TS-LYP300AHA."
+    },
+    "cathode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "anode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "electrolyte": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "performance": {
+    "rated_capacity": [
+      {
+        "value": 300,
+        "unit": "Ah",
+        "conditions": null,
+        "page": 2
+      }
+    ],
+    "nominal_voltage": {
+      "value": 3.3,
+      "unit": "V",
+      "page": 2,
+      "in_document": true,
+      "note": null
+    },
+    "min_voltage": {
+      "value": 2.8,
+      "unit": "V",
+      "page": 2,
+      "in_document": true,
+      "note": "The deep discharge voltage of 2.5 V is the damage limit, below which the cell is damaged."
+    },
+    "max_voltage": {
+      "value": 3.8,
+      "unit": "V",
+      "page": 2,
+      "in_document": true,
+      "note": "The maximal charge voltage of 4 V is the damage limit, above which the cell is damaged."
+    },
+    "rated_energy": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "max_charge_current": [
+      {
+        "value": 900,
+        "unit": "A",
+        "conditions": "< 3 C with battery temperature monitoring",
+        "page": 2
+      }
+    ],
+    "max_discharge_current": [
+      {
+        "value": 900,
+        "unit": "A",
+        "conditions": "3 C, continuous for max 15 minutes from full charge",
+        "page": 2
+      },
+      {
+        "value": 3000,
+        "unit": "A",
+        "conditions": "10 C, maximal 5 seconds in 1 minute",
+        "page": 2
+      }
+    ],
+    "internal_resistance": [
+    ],
+    "self_discharge_rate": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "round_trip_efficiency": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "durability": {
+    "cycle_life": [
+    ],
+    "end_of_life_threshold": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "calendar_life": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "operating_conditions": {
+    "charge_temperature": {
+      "value": {
+        "min": null,
+        "max": 65
+      },
+      "unit": "degC",
+      "page": 2,
+      "in_document": true,
+      "note": "The battery temperature should not increase this level during charge and discharge. Minimum temperature not provided"
+    },
+    "discharge_temperature": {
+      "value": {
+        "min": null,
+        "max": 65
+      },
+      "unit": "degC",
+      "page": 2,
+      "in_document": true,
+      "note": "The battery temperature should not increase this level during charge and discharge. Minimum temperature not provided"
+    },
+    "storage_temperature": [
+    ]
+  }
+}

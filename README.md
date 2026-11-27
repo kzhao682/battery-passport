@@ -62,6 +62,13 @@ The fields are defined in [battery_passport/schema.py](battery_passport/schema.p
 [docs/field_map.md](docs/field_map.md) maps each one to the Battery Pass data model; the passport
 fields datasheets rarely contain (carbon footprint, recycled content, due diligence) are out of scope here.
 
+## Tests
+
+```
+pip install -r requirements-dev.txt
+make test        # ~40 unit tests, under a second, never calls the API
+```
+
 ## Datasheets
 
 The PDFs used for development are third-party manufacturer documents and are not included in this

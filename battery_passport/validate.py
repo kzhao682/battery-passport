@@ -73,12 +73,21 @@ def _norm(s: str) -> str:
 
 
 def verify_quotes(result: dict, pdf_path: Path) -> tuple[list[str], int]:
-    """Check each filled field's quote appears on the page it names.
+    """Check each filled field's quote appears on the page it names in the PDF.
+
+    Reads the PDF's text layer, then defers to check_quotes().
+    """
+    return check_quotes(result, [p.extract_text() or "" for p in PdfReader(pdf_path).pages])
+
+
+def check_quotes(result: dict, page_texts: list[str]) -> tuple[list[str], int]:
+    """Check each filled field's quote appears on the page it names (page_texts[0] is page 1).
 
     Quotes with '...' are split and every part must appear on that page.
     Returns (problems, number_of_quotes_checked); problems is empty if all quotes check out.
+    Pure text in, no PDF needed, so it is cheap to test.
     """
-    pages = [_norm(p.extract_text() or "") for p in PdfReader(pdf_path).pages]
+    pages = [_norm(t) for t in page_texts]
     problems, checked = [], 0
     for key, field in iter_raw_evidence(result):
         quote, page = field.get("quote"), field.get("page")

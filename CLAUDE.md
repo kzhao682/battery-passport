@@ -8,7 +8,7 @@ battery passport: each field has a value, unit, page number and a verbatim quote
 - Never run an extraction or call the Anthropic API without asking Kevin first; reuse the saved
   files in `outputs/` instead. That covers `python -m battery_passport` without `--verify-only`,
   `--all`/`--devset` runs that need new files, `--force`, and `make devset` / `make batch`.
-  `--verify-only` and `make devset-verify` are free and fine to run.
+  `--verify-only`, `make devset-verify` and `make test` are free and fine to run.
 
 ## Run
 
@@ -42,6 +42,16 @@ Try `--limit 3` first: each file is roughly 5k-50k input tokens.
 Needs `ANTHROPIC_API_KEY` in `.env` (see `.env.example`). `--verify` exits 1 if any quote is not on
 its stated page.
 
+## Tests
+
+`make test` (pytest, ~40 tests, under a second) checks the code, not the model's accuracy; accuracy is
+the eval suite (Day 3+). Tests are free: `tests/conftest.py` replaces `anthropic.Anthropic` with a
+function that raises, so any accidental real API call fails the test instead of spending credits.
+No test uses a real PDF or the network: quote checking runs on plain strings (`check_quotes`), and
+`tests/test_cli.py` mocks `extract`. Keep it that way: never add a test that calls the API, and when
+you fix a bug, add a small regression test (see `test_glyph_name_oslash_matches_diameter_sign`).
+Install test deps with `pip install -r requirements-dev.txt`.
+
 ## Layout
 
 All Python lives in the `battery_passport/` package. Run everything **from the repo root**
@@ -60,9 +70,16 @@ the package, one job per module; don't add `.py` files at the repo root.
   plausibility rules (Day 6+) belong here or in a sibling module.
 - `battery_passport/cli.py`: argument parsing, `process_pdf()`, `run_batch()` and the summary.
   `__main__.py` makes `python -m battery_passport` work.
+- `battery_passport/labels.py`: writes blank gold-label templates (`make labels`, never overwrites).
+  `battery_passport/evaluate.py`: scores `outputs/` against `evals/labels/` (`make eval`, free);
+  results go to `evals/results/`.
 - `docs/blueprint.md`: the 14-day project plan (local only, gitignored, so it may be absent in a
   fresh clone). `docs/field_map.md`: how each schema field maps to the Battery Pass data model.
-- `evals/devset.json`: the 10 dev datasheets. Gold labels (Day 3) go in `evals/labels/<name>.json`.
+- `evals/devset.json`: the 10 dev datasheets. Gold labels (Day 3) are in `evals/labels/<name>.json`
+  (5 files, ~100 values, hand-labelled from the PDFs). Edit labels by hand; **never hand-edit
+  `outputs/`** (the eval compares the two; re-extract instead). A label `value: null` means "not
+  stated". Some labels deliberately infer (LG chemistry "NMC" from "INR", WINSTON max 65 degC), so
+  the model returning null there counts as a miss. That is expected until the prompt changes.
 - `documents/`: local datasheet PDFs, **gitignored** (third-party copyright). `documents/SOURCES.md`
   is the tracked manifest of where each came from.
 - `outputs/`: generated JSON, gitignored. `outputs/v0_flat/` holds the older flat-schema outputs.

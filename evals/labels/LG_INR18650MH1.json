@@ -1,0 +1,231 @@
+{
+  "document_id": "LG_INR18650MH1.pdf",
+  "labelled": true,
+  "general": {
+    "manufacturer": {
+      "value": "LG Chem",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": null
+    },
+    "model": {
+      "value": "INR18650 MH1",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": "Full title is INR18650 MH1 3200mAh"
+    },
+    "battery_type": {
+      "value": "Cylindrical rechargeable lithium ion battery",
+      "unit": null,
+      "page": 5,
+      "in_document": true,
+      "note": "Cell level (single cell)"
+    },
+    "weight": {
+      "value": 47.0,
+      "unit": "g",
+      "page": 4,
+      "in_document": true,
+      "note": "Maximum weight"
+    },
+    "dimensions": {
+      "value": {
+        "diameter": 18.29,
+        "height": 65.2
+      },
+      "unit": "mm",
+      "page": 2,
+      "in_document": true,
+      "note": "Diameter tolerance ±0.11 mm; height is maximum (≤ 65.20 mm). Diameter is the largest value measured on the 'A' area. Terminal inclusion not stated."
+    }
+  },
+  "materials": {
+    "chemistry": {
+      "value": "NMC",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": "INR refers to NMC (Nickel Manganese Cobalt) chemistry"
+    },
+    "cathode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "anode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "electrolyte": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "performance": {
+    "rated_capacity": [
+      {
+        "value": 3200,
+        "unit": "mAh",
+        "conditions": "Standard charge / discharge (0.5C CC-CV charge to 4.2V, 50mA cut-off; 0.2C discharge to 2.5V), 23 ± 2 degC",
+        "page": 4
+      },
+      {
+        "value": 3100,
+        "unit": "mAh",
+        "conditions": "Standard charge / discharge (0.2C discharge)",
+        "page": 4
+      }
+    ],
+    "nominal_voltage": {
+      "value": 3.7,
+      "unit": "V",
+      "page": 4,
+      "in_document": true,
+      "note": null
+    },
+    "min_voltage": {
+      "value": 2.5,
+      "unit": "V",
+      "page": 4,
+      "in_document": true,
+      "note": null
+    },
+    "max_voltage": {
+      "value": 4.2,
+      "unit": "V",
+      "page": 4,
+      "in_document": true,
+      "note": null
+    },
+    "rated_energy": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "max_charge_current": [
+      {
+        "value": 3100,
+        "unit": "mA",
+        "conditions": "1.0 C",
+        "page": 4
+      }
+    ],
+    "max_discharge_current": [
+      {
+        "value": 10,
+        "unit": "A",
+        "conditions": null,
+        "page": 4
+      }
+    ],
+    "internal_resistance": [
+      {
+        "value": 40,
+        "unit": "mOhm",
+        "conditions": "AC impedance at 1kHz after standard charge, without PTC",
+        "page": 6
+      }
+    ],
+    "self_discharge_rate": {
+      "value": 90,
+      "unit": "%",
+      "page": 6,
+      "in_document": true,
+      "note": "Capacity remaining rate minimum, relative to Cmin"
+    },
+    "round_trip_efficiency": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "durability": {
+    "cycle_life": [
+      {
+        "value": 500,
+        "unit": "cycles",
+        "conditions": "Charge 0.5C to 4.20V with 50mA end current, discharge 0.5C to 2.50V, rest 10 min after charge and 20 min after discharge (4.1.3), 23 degC; 501st discharge capacity measured per 4.1.1 and 4.1.2",
+        "page": 6
+      }
+    ],
+    "end_of_life_threshold": {
+      "value": 70,
+      "unit": "%",
+      "page": 6,
+      "in_document": true,
+      "note": "Pass criterion after 500 cycles, not explicit end-of-life definition"
+    },
+    "calendar_life": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "operating_conditions": {
+    "charge_temperature": {
+      "value": {
+        "min": 0,
+        "max": 45
+      },
+      "unit": "degC",
+      "page": 4,
+      "in_document": true,
+      "note": null
+    },
+    "discharge_temperature": {
+      "value": {
+        "min": -20,
+        "max": 60
+      },
+      "unit": "degC",
+      "page": 4,
+      "in_document": true,
+      "note": null
+    },
+    "storage_temperature": [
+      {
+        "value": {
+          "min": -20,
+          "max": 60
+        },
+        "unit": "degC",
+        "conditions": "1 month, for shipping state",
+        "page": 4
+      },
+      {
+        "value": {
+          "min": -20,
+          "max": 45
+        },
+        "unit": "degC",
+        "conditions": "3 months, for shipping state",
+        "page": 4
+      },
+      {
+        "value": {
+          "min": -20,
+          "max": 20
+        },
+        "unit": "degC",
+        "conditions": "1 year, for shipping state",
+        "page": 4
+      }
+    ]
+  }
+}

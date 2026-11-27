@@ -1,0 +1,236 @@
+{
+  "document_id": "HKD_Na18650-1300.pdf",
+  "labelled": true,
+  "general": {
+    "manufacturer": {
+      "value": "Shenzhen Zhonghuajia Technology Co.,Ltd.",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": null
+    },
+    "model": {
+      "value": "18650-1300mAh",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": "Type is stated as High Rate."
+    },
+    "battery_type": {
+      "value": "Cell, cylindrical (18650)",
+      "unit": null,
+      "page": 4,
+      "in_document": true,
+      "note": "Cell level is stated. Cylindrical form is inferred from the 18650 designation and the assembly drawing."
+    },
+    "weight": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "dimensions": {
+      "value": {
+        "diameter": 18.25,
+        "height": 65.5
+      },
+      "unit": "mm",
+      "page": 4,
+      "in_document": true,
+      "note": "Tolerances: diameter ±0.20 mm, height ±0.30 mm. The document does not say whether terminals are included in the height."
+    }
+  },
+  "materials": {
+    "chemistry": {
+      "value": "Na-ion",
+      "unit": null,
+      "page": 1,
+      "in_document": true,
+      "note": null
+    },
+    "cathode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "anode_material": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "electrolyte": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "performance": {
+    "rated_capacity": [
+      {
+        "value": 1300,
+        "unit": "mAh",
+        "conditions": "Discharge 0.2C, cut-off voltage 1.8V",
+        "note": "Typical capacity.",
+        "page": 4
+      },
+      {
+        "value": 1220,
+        "unit": "mAh",
+        "conditions": "Discharge 0.2C, cut-off voltage 1.8V",
+        "note": "Minimum capacity.",
+        "page": 4
+      }
+    ],
+    "nominal_voltage": {
+      "value": 3.0,
+      "unit": "V",
+      "page": 4,
+      "in_document": true,
+      "note": null
+    },
+    "min_voltage": {
+      "value": 1.8,
+      "unit": "V",
+      "page": 5,
+      "in_document": true,
+      "note": "Discharge cut-off voltage."
+    },
+    "max_voltage": {
+      "value": 4.0,
+      "unit": "V",
+      "page": 5,
+      "in_document": true,
+      "note": "Charge cut-off voltage. Maximum float voltage is 3.95V."
+    },
+    "rated_energy": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "max_charge_current": [
+      {
+        "value": 3900,
+        "unit": "mA",
+        "conditions": "End of charge voltage 3.95V",
+        "page": 4
+      },
+      {
+        "value": 2600,
+        "unit": "mA",
+        "conditions": "End of charge voltage 4.0V",
+        "page": 4
+      }
+    ],
+    "max_discharge_current": [
+      {
+        "value": 26000,
+        "unit": "mA",
+        "conditions": "Maximum discharge current, 20C, continuous",
+        "page": 5
+      },
+      {
+        "value": 39000,
+        "unit": "mA",
+        "conditions": "Instantaneous maximum discharge current, 30C, ≤5s",
+        "page": 5
+      }
+    ],
+    "internal_resistance": [
+      {
+        "value": 20,
+        "unit": "mOhm",
+        "conditions": "AC 1kHz after standard charge",
+        "page": 4
+      }
+    ],
+    "self_discharge_rate": {
+      "value": 90,
+      "unit": "% of Cmin",
+      "page": 7,
+      "in_document": true,
+      "note": "Minimum retention capacity. Recovered capacity is ≥95% Cmin."
+    },
+    "round_trip_efficiency": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "durability": {
+    "cycle_life": [
+      {
+        "value": 1000,
+        "unit": "cycles",
+        "conditions": "25±2 degC, charge 1.0C to 4.0V then CV until ≤0.05C, rest 0.5h, discharge 1.0C to 1.8V; capacity ≥85% after 1000 cycles",
+        "page": 6
+      }
+    ],
+    "end_of_life_threshold": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    },
+    "calendar_life": {
+      "value": null,
+      "unit": null,
+      "page": null,
+      "in_document": true,
+      "note": null
+    }
+  },
+  "operating_conditions": {
+    "charge_temperature": {
+      "value": {
+        "min": -10,
+        "max": 45
+      },
+      "unit": "degC",
+      "page": 5,
+      "in_document": true,
+      "note": "Range derived from the lowest and highest bands in the table."
+    },
+    "discharge_temperature": {
+      "value": {
+        "min": -40,
+        "max": 60
+      },
+      "unit": "degC",
+      "page": 5,
+      "in_document": true,
+      "note": "Range derived from the lowest and highest bands in the table."
+    },
+    "storage_temperature": [
+      {
+        "value": {
+          "min": -10,
+          "max": 40
+        },
+        "unit": "degC",
+        "conditions": "Less than 1 month",
+        "page": 6
+      },
+      {
+        "value": {
+          "min": -10,
+          "max": 35
+        },
+        "unit": "degC",
+        "conditions": "Less than 6 months",
+        "page": 6
+      }
+    ]
+  }
+}

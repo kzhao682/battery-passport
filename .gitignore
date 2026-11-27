@@ -13,3 +13,4 @@ documents/*
 
 # Local project plan (business notes), not published
 docs/blueprint.md
+.pytest_cache/
